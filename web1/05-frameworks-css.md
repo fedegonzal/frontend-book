@@ -166,12 +166,15 @@ Uno de los rasgos más característicos de Tailwind es que el responsive design 
 
 ```html
 <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-<article class="rounded-xl border bg-white p-4 shadow-sm">Producto
-1</article>
-<article class="rounded-xl border bg-white p-4 shadow-sm">Producto
-2</article>
-<article class="rounded-xl border bg-white p-4 shadow-sm">Producto
-3</article>
+    <article class="rounded-xl border bg-white p-4 shadow-sm">
+        Producto 1
+    </article>
+    <article class="rounded-xl border bg-white p-4 shadow-sm">
+        Producto 2
+    </article>
+    <article class="rounded-xl border bg-white p-4 shadow-sm">
+        Producto 3
+    </article>
 </div>
 ```
 
