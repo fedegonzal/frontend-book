@@ -165,7 +165,7 @@ Las media queries permiten ajustar el diseño cuando cambian ciertas condiciones
 }
 ```
 
-```text
+```css
 @media (min-width: 1024px) {
   .productos {
     grid-template-columns: repeat(3, 1fr);

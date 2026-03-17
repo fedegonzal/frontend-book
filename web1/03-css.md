@@ -210,7 +210,7 @@ Los selectores por ID son más específicos, pero se recomienda usarlos con mode
 
 Este tipo de selector apunta a elementos que contienen un atributo específico o un valor determinado. Son mucho menos comunes de usar, pero muy importantes en algunos casos.
 
-```text
+```css
 input[type="email"] {
 border: 1px solid #00f;
 }
@@ -226,7 +226,7 @@ Además de los selectores básicos, CSS ofrece más herramientas para aplicar es
 
 Las pseudoclases permiten aplicar estilos a un elemento cuando se encuentra en un estado particular o en una posición dentro del documento. Se escriben con dos puntos seguido del nombre del estado sobre el que se definirá el estilo (la pseudoclase).
 
-```text
+```css
 a:hover {
 color: red;
 }
@@ -236,7 +236,7 @@ Esta regla cambia el color de los enlaces cuando el usuario pasa el cursor sobre
 
 Otro caso frecuente:
 
-```text
+```css
 li:first-child {
 font-weight: bold;
 }
@@ -249,44 +249,42 @@ Existen muchísimas pseudoclases, en la documentación de la fundación Mozilla,
 
 A continuación se resumen las más comunes:
 
-```text
-:hover
+`:hover`
 Se activa cuando el usuario pasa el cursor sobre un elemento. Muy
 utilizada para mejorar la interactividad, por ejemplo, en botones y
 enlaces.
 
-:active
+`:active`
 Se aplica mientras el elemento está siendo activado, por ejemplo, el
 tiempo en que se presiona un botón.
 
-:focus
+`:focus`
 Se dispara cuando un elemento (como un input o un enlace) recibe el
 foco, permitiendo mejorar la accesibilidad y la experiencia del
 usuario en formularios y navegaciones mediante teclado.
 
-:first-child
+`:first-child`
 Selecciona el primer hijo de un elemento contenedor. Es útil para
 aplicar estilos diferenciados al primer elemento de una lista o
 sección.
 
-:last-child
-Similar a :first-child, este selector apunta al último hijo del
+`:last-child`
+Similar a `:first-child`, este selector apunta al último hijo del
 contenedor, permitiendo ajustar estilos de cierre o final.
 
-:checked
+`:checked`
 Muy útil en formularios, permite estilizar elementos como casillas de
 verificación y botones de radio cuando están seleccionados.
 
-:disabled
+`:disabled`
 Aplica estilos a elementos que están deshabilitados, por ejemplo,
 campos de formulario o botones que no deben interactuarse.
-```
 
 **Pseudoelementos**
 
 Los pseudoelementos permiten aplicar estilos a partes específicas de un elemento. Se escriben con doble dos puntos seguidos del nombre del pseudoelemento.
 
-```text
+```css
 p::first-line {
 text-transform: uppercase;
 }
@@ -294,7 +292,7 @@ text-transform: uppercase;
 
 Esta regla convierte en mayúsculas solo la primera línea de cada párrafo.
 
-```text
+```css
 p::before {
 content: "→ ";
 color: gray;
@@ -497,7 +495,7 @@ Por defecto, CSS utiliza el valor `content-box`, lo que significa que el ancho y
 
 Para evitar cálculos innecesarios y lograr diseños más predecibles, es común usar:
 
-```text
+```css
 * {
 box-sizing: border-box;
 }
@@ -1074,7 +1072,7 @@ Los pseudo-elementos `::before` y `::after` permiten insertar contenido decorati
 
 Ejemplo:
 
-```text
+```css
 .precio::before {
 content: "$";
 color: #2f6b2f;
@@ -1090,7 +1088,7 @@ Las variables de CSS, también llamadas custom properties, permiten definir valo
 
 Ejemplo:
 
-```text
+```css
 :root {
 --color-primario: #2f6b2f;
 --color-secundario: #f7f4ea;
@@ -1118,7 +1116,7 @@ transition: background-color 0.3s ease, transform 0.3s ease;
 }
 ```
 
-```text
+```css
 .boton:hover {
 background-color: #245224;
 transform: translateY(-2px);
