@@ -1,0 +1,822 @@
+Desarrollo web 2
+Tecnicatura Universitaria en Desarrollo de Aplicaciones
+
+Web estática
+HTML básico, CSS básico, JS ínfimo. 
+Usuario pasivo.
+Web dinámica AJAX
+HTML4, CSS2/3, JS moderado. 
+Primeras APIs.
+Usuario interactivo. 
+Redes sociales.
+Smartphones
+LLMs
+SPA JS Frameworks
+Components, JS intensivo.
+NodeJS, Angular, React, Vue. 
+Babel, transpiladores. Frontend.
+Problemas con SEO.
+Server Side Web 
+HTML3, CSS2, JS mínimo, PHP, ASP, JSP.
+Usuario pasivo. Blogs.
+SSR Frameworks I
+HTML4, CSS2, JS mínimo, Symphony, Rails, Spring.
+Usuario interactivo.
+SSR Frameworks II
+HTML5, CSS3, JS moderado. Laravel, Django, .Net
+Usuario activo. 
+Diseño Responsive. Web Apps.
+Web Components
+Incipiente. Alta estandarización, poca compatibilidad con Browsers. Baja aceptación.
+ES5
+Se desarrolla JSON format. APIs REST.
+ES6
+Javascript actual.
+Hybrid Frameworks
+SPA & SSR Components. 
+NextJS, Laravel, HTMX.
+Resuelve SEO. Fullstack.
+Cómo llegamos a la web actual
+2000
+2005
+2010
+2015
+2020
+2025
+
+Grid, Flex y Tailwind
+
+.container {
+    display: flex;
+}
+
+
+<div class="container">
+    <div>Caja 1</div>
+    <div>Caja 2</div>
+    <div>Caja 3</div>
+</div>
+Qué es Flexbox
+Flexbox (o Flexible Box Layout) es un modo de diseño en CSS pensado para organizar elementos en una dimensión (fila o columna) de forma flexible y eficiente, adaptándose automáticamente a diferentes tamaños de pantalla y contenido.
+
+Qué es Flexbox
+Flexbox (o Flexible Box Layout) es un modo de diseño en CSS pensado para organizar elementos en una dimensión (fila o columna) de forma flexible y eficiente, adaptándose automáticamente a diferentes tamaños de pantalla y contenido.
+.container {
+    display: flex;
+    flex-direction: row;
+}
+
+<div class="container">
+    <div>Caja 1</div>
+    <div>Caja 2</div>
+    <div>Caja 3</div>
+</div>
+
+Qué es Flexbox
+Flexbox (o Flexible Box Layout) es un modo de diseño en CSS pensado para organizar elementos en una dimensión (fila o columna) de forma flexible y eficiente, adaptándose automáticamente a diferentes tamaños de pantalla y contenido.
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+<div class="container">
+    <div>Caja 1</div>
+    <div>Caja 2</div>
+    <div>Caja 3</div>
+</div>
+
+   flex-direction: row;
+    justify-content: center;
+Qué es Flexbox
+.container {
+    display: flex;
+    flex-direction: row;
+    justify-content: xxxxx;
+}
+
+<div class="container">
+    <div>Caja 1</div>
+    <div>Caja 2</div>
+    <div>Caja 3</div>
+</div>
+   flex-direction: row;
+    justify-content: flex-end;
+   flex-direction: row;
+    justify-content: flex-between;
+   flex-direction: row;
+    justify-content: flex-around;
+
+Qué es Flexbox
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: xxxxx;
+}
+
+<div class="container">
+    <div>Caja 1</div>
+    <div>Caja 2</div>
+    <div>Caja 3</div>
+</div>
+flex-between;
+flex-end;
+center;
+flex-around;
+
+En el contenedor (padre):
+
+display: flex; → activa Flexbox
+flex-direction → dirección de los elementos 
+(row, column, etc.)
+
+justify-content → alineación horizontal
+align-items → alineación vertical
+Principales propiedades de Flexbox
+En los elementos (hijos):
+
+flex-grow, flex-shrink, flex-basis → 
+control del tamaño flexible
+
+order → cambia el orden de aparición
+
+Qué es Grid
+CSS Grid Layout es un sistema de diseño en dos dimensiones que permite crear estructuras de filas y columnas de manera muy flexible.
+
+Diseño bidimensional: control simultáneo de filas y columnas.
+Control de espacios: definir gaps (espacios entre celdas) sin márgenes complicados.
+Adaptabilidad: muy útil para diseños responsive sin usar muchos media queries.
+
+Introducción a Javascript moderno
+
+NPM es un gestor de paquetes para Javascript (técnicamente para Node.js) y es una de las herramientas más utilizadas en el desarrollo web moderno. 
+
+Permite compartir, instalar y administrar librerías y herramientas de JavaScript de manera sencilla y ordenada, pensada para equipos diversos y también para desarrolladores individuales.
+NPM (node package manager)
+
+NPM no se instala por separado, viene incluido con Node.js. 
+
+1. Descargar Node.js desde la página oficial https://nodejs.org 
+2. Elegir la versión recomendada (LTS = Long Term Support) para mayor estabilidad
+
+Una vez instalado, abrir la terminal o consola y comprobar con:
+node -v 		→ muestra la versión de Node.js
+npm -v 		→ muestra la versión de NPM
+NPM (node package manager)
+
+NPM suele usarse para cuatro funciones:
+
+1. Instalar dependencias (librerías)
+2. Gestionar versiones (por versión o por sistema operativo)
+3. Automatizar tareas mediante scripts definidos en el archivo package.json
+4. Publicar y compartir paquetes con la comunidad global
+NPM (node package manager)
+
+Antes de NPM existían librerías para JavaScript, pero el problema era cómo organizarlas y distribuirlas. Los desarrolladores tenían que buscar en internet, ir al sitio web donde estuviera publicada la librería que querían usar, descargar los archivos manualmente, copiarlos en sus proyectos y asegurarse de mantener la versión correcta. 
+
+Esto hacía que los proyectos fueran difíciles de actualizar y de compartir entre equipos.
+NPM (node package manager)
+
+npm init 					→ Crea un archivo package.json para el proyecto
+npm install <paquete> 		→ Instala un paquete y lo guarda en node_modules
+npm install				→ Instala todas las dependencias listadas en el package.json
+npm uninstall <paquete>	→ Elimina un paquete instalado
+npm update <paquete> 		→ Actualiza un paquete a su última versión compatible
+npm list 					→ Muestra la lista de dependencias instaladas en el proyecto
+npm run <script> 			→ Ejecuta un script definido en el package.json 						     (por ejemplo, npm run start)
+NPM (node package manager)
+
+package.json es un archivo clave en los proyectos de Node.js y NPM. Su función principal es guardar información del proyecto y listar todas sus dependencias (las librerías que necesita para funcionar), así como scripts y configuraciones. 
+
+Con package.json un desarrollador que descargue el proyecto puede instalar sus dependencias ejecutando un solo comando: npm install
+NPM (node package manager)
+
+Algunas librerías disponibles para NPM (hay millones)
+React	→ Librería para construir interfaces de usuario (frontend).
+Lodash	→ Conjunto de funciones útiles para trabajar con arreglos, objetos y datos.
+Axios 	→ Cliente HTTP para hacer peticiones a APIs.
+Moment 	→ Manejo y formateo de fechas y horas.
+TypeScript	→ Superset de JavaScript que añade tipado estático para proyectos más robustos.
+Babel 	→ Transpila código moderno de JavaScript para funcionar en navegadores antiguos.
+NPM (node package manager)
+
+Algunas librerías disponibles para NPM (hay millones)
+ESLint		→ Analiza el código para encontrar errores y mantener un estilo consistente.
+Prettier 		→ Formateador automático de código.
+Socket.io 		→ Comunicación en tiempo real (chats, notificaciones, juegos online).
+Passport 		→ Autenticación de usuarios (con Facebook, Google, etc.).
+React Router 	→ Permite manejar rutas y navegación en aplicaciones React.
+Redux 		→ Manejo de estado global en aplicaciones React o JavaScript.
+Next.js 		→ Framework React para renderizado del lado del servidor y rutas automáticas.
+NPM (node package manager)
+
+Algunas librerías disponibles para NPM (hay millones)
+Bootstrap 		→ Framework CSS con componentes visuales.
+Material-UI	→ Librería de componentes React basados en Material Design de Google.
+Tailwind 		→ Librería con clases para simplificar el desarrollo con CSS.
+Leaflet 		→ Mapas interactivos para web y aplicaciones, con muchos plugins visuales.
+Framer Motion 	→ Animaciones fluidas y efectos interactivos para React.
+SweetAlert2 	→ Modales y alertas con diseño moderno y personalizable.
+NPM (node package manager)
+
+{
+  "name": "mi-proyecto",
+  "version": "1.0.0",
+  "description": "Proyecto de ejemplo",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+  },
+  "author": "Tu Nombre",
+  "license": "MIT"
+}
+package.json
+El formato básico de un package.json incluye el nombre del proyecto, la versión, los scripts que éste podrá ejecutar y las dependencias que deberán instalarse con las versiones correspondientes.
+
+Es un herramienta moderna de desarrollo web que permite crear y ejecutar proyectos de JavaScript y frameworks como React, Vue o Svelte de manera rápida y eficiente. Su principal ventaja es que arranca el servidor de desarrollo casi instantáneamente y actualiza los cambios en el navegador en tiempo real (hot module replacement), sin necesidad de recargar toda la página.
+
+Vite acelera el flujo de desarrollo y facilita que los proyectos sean más rápidos, tanto al escribir código como al prepararlos para producción. https://vite.dev/ 
+Vite (se pronuncia vit)
+
+Tailwind
+
+Tailwind CSS es un framework de utilidades que permite construir interfaces a través de clases pequeñas y específicas, como p-4 para el padding o bg-blue-500 para el color de fondo. 
+
+No trae componentes pre-armados, sino que ofrece flexibilidad total para personalizar el diseño desde cero, adaptándose fácilmente a la identidad visual de cada proyecto. Es muy usado en entornos modernos con React, Vue o Next.js, y resulta ideal cuando se busca un estilo único sin depender de un look predeterminado. https://tailwindcss.com/ 
+Qué es Tailwind
+
+Bootstrap, en cambio, es un framework que incluye componentes ya diseñados como botones, menús, modales o grids, lo que permite construir interfaces rápidamente sin necesidad de definir cada detalle del estilo. 
+
+Tailwind CSS normalmente requiere un proceso de compilación, esto se debe a que funciona con un sistema de clases utilitarias generadas a partir de configuración, y para optimizar el tamaño final del CSS se compila para eliminar todas las clases que no se usan en el proyecto. Es común integrarlo con herramientas como Vite, para que compile tu CSS final de forma automática.
+Diferencia con Bootstrap
+
+Introducción a GIT
+
+Control de versiones
+v1.0
+3 clientes
+v2
+3 clientes
+v1.1
+SCM
+SVN
+CVS
+GIT
+https://about.gitlab.com/images/press/git-cheat-sheet.pdf
+
+https://education.github.com/git-cheat-sheet-education.pdf 
+
+Ramas (branch) y tags
+1.0
+1.1
+2.0
+2.1
+1.2
+1.1.1
+2.2
+TicketsLive
+TicketsLive
+online
+merge
+Clone
+Commit
+Pull
+Push
+Merge
+
+
+Cliente y servidor GIT
+Servicios
+Github
+Gitlab
+Bitbucket
+servidor
+ustedes
+Software cliente
+https://git-scm.com/ 
+
+Uso de APIs REST
+
+Es un conjunto de reglas, funciones y protocolos que permiten que diferentes sistemas se comuniquen entre sí.
+
+Intermedia la comunicación
+Está estandarizada y documentada
+Es reutilizable
+Debe ser segura
+Application Programming Interface (API)
+
+El concepto de API es muy amplio y abarca cuestiones funcionales, estructurales, tecnológicas y hasta documentales. Por ejemplo, los lenguajes de programación (como Javascript, Python, etc) tienen palabras clave que usamos para programar (let, while, function, etc) esas palabras clave son "la API" del lenguaje para que nosotros escribamos código que el lenguaje pueda comprender.
+
+En esta materia nos interesan las APIs de datos y servicios. Son las que usaremos para que nuestro frontend interactúe con información que reside en otros sistemas (por ejemplo, una base de datos en un servidor)
+Distintos tipos de APIs
+
+REST (Representational State Transfer)
+- El más común hoy en día.
+- Usa HTTP y formatos como JSON.
+
+GraphQL
+- Similar a REST, pero permite pedir
+  exactamente los datos que necesitan.
+- Usa HTTP y formatos como JSON.
+Distintos tipos de arquitecturas APIs
+SOAP (Simple Object Access Protocol)
+- Más antiguo, usa XML, es más rígido.
+
+
+WebSockets
+Permiten una conexión bidireccional y persistente entre cliente y servidor. Normalmente devuelve JSON. Útiles para tiempo real.
+
+Representational State Transfer (REST) es un estilo de arquitectura para diseñar APIs basadas en HTTP. La arquitectura define cómo se interactúa con HTTP. Si bien las APIs REST no definen el formato de intercambio de información, lo más común es usar JSON para enviar y recibir los datos.
+
+Muchas veces suele verse el concepto de RESTFul. Esto no es más que otra forma de decir "REST". En la práctica, REST es la definición y RESTFul su correcta implementación. En la materia hablaremos de REST haciendo referencia a ambos.
+Qué es una API REST
+
+Cliente - Servidor: separación entre cliente (app) y servidor (API).
+
+Sin estado (stateless): no hay sesión, cada petición envía y recibe todo lo necesario.
+
+Cacheable: las respuestas pueden almacenarse en caché para optimizar.
+
+Interfaz uniforme: recursos se identifican con URLs (ejemplo: /users/1).
+
+Sistema en capas: puede haber proxys, balanceadores, etc. sin afectar al cliente.
+Principios de una API REST
+
+Cada petición a una API REST va acompañada de la acción que se quiere ejecutar sobre un recurso (o endpoint), esto habitualmente se llama método o verbo HTTP.
+
+Por ejemplo, para solicitar información sobre un recurso, se utiliza el verbo GET.
+
+GET /users		→ devuelve una lista con datos de todos los usuarios
+GET /users/15	→ devuelve datos del usuario 15
+Acciones posibles sobre una API REST
+
+Acciones posibles sobre una API REST
+
+Algunas APIs ofrecen la posibilidad de agregar parámetros opcionales en la URL del recurso a solicitar. Esto es útil por ejemplo para pedir que los datos devueltos estén ordenados o filtrados bajo cierto criterio, etc. Es muy útil para paginar resultados.
+
+La disponibilidad de estos parámetros opcionales dependerá de la implementación de cada API, no es una función automática.
+
+GET /productos?categoria=verduleria&atributos=organico,local
+Parámetros opcionales en la URL
+
+La autenticación es el proceso de verificar la identidad de un usuario, dispositivo o aplicación.
+
+Confirma que quien hace la petición es quien dice ser.
+
+Protege los recursos de accesos no autorizados.
+
+Es la primera capa antes de aplicar autorización 
+(decidir qué puede hacer ese usuario).
+Autenticación en APIs REST
+Login == Autenticar
+Qué puedo hacer == Autorizar
+
+Tipos de autenticación en APIs REST
+
+La documentación de una API es crucial, si la API no tiene documentación, está desactualizada o no explica correctamente todas las opciones, quien quiera usar esa API para desarrollar no sabrá qué hacer, o perderá mucho tiempo tratando de "entender" cómo funciona esa API.
+
+Si bien no hay una forma estándar de documentar una API, lo más común hoy es usar la herramienta Swagger, que es un sistema de documentación interactivo para APIs, prácticamente un estándar (que no lo es). https://swagger.io/ 
+La importancia de la documentación
+
+Hemos dispuesto una API que simula los productos y categorías de un supermercado. Usaremos esa API para realizar diferentes trabajos prácticos de la materia.
+http://161.35.104.211:8000/docs 
+Una API para aprender con la materia
+
+Antes de trabajar con una API vale la pena invertir un poco de tiempo en entenderla y probarla, por fuera del lenguaje que estemos por usar. Hay herramientas de consola y también visuales para interactuar con APIs. Es muy recomendable usarlas.
+
+Consola: cURL, wscat, HTTPie
+
+Visuales: Postman, Insomnia, Swagger, HTTPie
+
+Lenguajes: practicamente todos. Ej: con Javascript usamos fetch o axios
+Herramientas para testeo de APIs
+
+Web Components
+
+Web Components es un conjunto de tecnologías que permite crear elementos personalizados reutilizables, con su funcionalidad aislada del resto del código. Es un estándar oficial mantenido por W3C e implementado en navegadores modernos.
+
+A diferencia de React (que es una librería), Web Components es nativo en la web.
+
+https://github.com/WICG/webcomponents 
+https://developer.mozilla.org/en-US/docs/Web/API/Web_components 
+Un estandar de la W3C, nativo en browsers
+
+Reutilizables: mismo componente en múltiples páginas.
+
+Fáciles de mantener: separación clara de responsabilidades.
+
+Soporte nativo en navegadores: sin dependencias de frameworks o librerías.
+
+Mejora progresiva: funciona con HTML/CSS/JS básicos.
+Ventajas de Web Components
+
+Es una API de JavaScript para crear etiquetas personalizadas y definir su comportamiento. Luego pueden usarse en la interfaz como si fueran etiquetas HTML normales. Las etiquetas se crean con JS y se usan como si fueran HTML.
+
+<mi-componente> </mi-componente>
+
+https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements 
+Custom Elements
+
+Asocia un árbol DOM encapsulado a un elemento. Permite mantener estilo y funcionalidad privados. Evita colisiones con otros elementos del documento.
+
+Esta ventaja de encapsulación es muy importante, pero también puede hacer que el contenido del componente sea más difícil de acceder y modificar desde el exterior, algo que a veces es necesario.
+
+https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM
+Shadow DOM
+
+Custom Elements es la API para definir una etiqueta nueva y darle comportamiento propio. Es indispensable para crear Web Components.
+
+Shadow DOM es la API para encapsular el estilo y la estructura de un componente, evitando colisiones con el resto del documento. Es opcional, aunque se recomienda su uso para una mayor modularidad.
+Creación de un componente:
+
+class ProductoItem extends HTMLElement {
+    constructor() {
+        super();
+    }
+}
+
+customElements.define(
+'producto-item', ProductoItem
+)
+Resumen de conceptos
+
+connectedCallback() se ejecuta al insertar un elemento en el DOM.
+render() se encarga de actualizar el contenido del componente.
+
+disconnectCallback() se ejecuta al eliminar un elemento del DOM.
+renderError() se ejecuta si hay un error en render().
+
+El componente debe registrarse y asignarle un nombre. El nombre debe llevar guión.
+customElements.define('producto-item', ProductoItem)
+
+Métodos básicos
+
+Los Web Components pueden recibir parámetros (atributos), también tienen propiedades.
+
+<producto-item titulo="Remera mangas cortas blanca"></producto-item> 
+
+se leen dentro del componente con this.getAttribute('titulo')
+Si un atributo cambia en tiempo de ejecución, se puede utilizar el método attributeChangedCallback() para reaccionar al cambio.
+
+Hablamos de propiedades en vez de atributos cuando los utilizamos en JavaScript: miElemento.titulo = "Remera mangas cortas negra";
+Definición de parámetros
+
+Un componente puede importar y usar otros. Esto se llama composición y permite crear interfaces complejas desde componentes simples.
+
+Por ejemplo, un componente <productos-list> puede importar y utilizar internamente múltiples <producto-item>, encargándose cada uno de mostrar la información de un producto. De esta forma se logra una estructura modular, donde cada pieza tiene una responsabilidad clara, y al combinarlas se obtiene una interfaz escalable y fácil de mantener, siguiendo el principio de “divide y vencerás”.
+Component Composition
+
+Lit es una librería de Google para crear web components de manera sencilla, rápida y eficiente. Está construida sobre los estándares (como Custom Elements y Shadow DOM), lo que significa que los componentes desarrollados con Lit son reutilizables y compatibles con cualquier framework o aplicación que soporte estos estándares.
+
+Lit trabaja con renderizado reactivo, utiliza plantillas basadas en Literals. Fue desarrollada en 2018, pero en 2021 se replanteó en lo que hoy es la versión actual.
+LIT (librería de Google)
+
+LIT (librería de Google)
+Con enfoque minimalista, es una librería muy pequeña, lo que mejora el rendimiento en aplicaciones modernas. 
+
+Por esto, Lit se ha convertido en una opción popular para quienes buscan crear interfaces web modulares, rápidas y con soporte a largo plazo sin depender de frameworks más pesados como React o Angular.
+
+Lit es ideal para integrar web components en aplicaciones SSR o Vainilla JS.
+
+Como Lit está basado en el estándar, la única diferencia para crear un componente es que en vez de extender de HTMLElement, extenderemos de LitElements (que a su vez extiende de HTMLElement).
+
+Lit es una subclase de HTMLElement.
+Creación de un componente:
+
+import { LitElement } from 'lit';
+
+class ProductoItem extends LitElement {
+  constructor() {
+    super();
+  }
+}
+
+customElements.define(
+'producto-item', ProductoItem
+)
+Componente básico
+
+import { LitElement } from 'lit';
+
+class CarritoCompras extends LitElement {
+  
+  static properties = {
+    productos: { type: Array }
+  };
+
+  constructor() {
+    super();
+  }
+}
+
+customElements.define(
+'producto-item', ProductoItem
+)
+La principal diferencia entre Lit y el estándar Web Components, es que Lit aporta una capa reactiva en sus componentes.
+
+Esto significa que los componentes tendrán propiedades que pueden cambiar de estado, y si estas propiedades cambian, el componente también cambiará.
+Elementos reactivos
+
+ render() {
+    return html`
+      <div class="carrito">
+        <h3>Carrito de Compras</h3>
+        <div class="contador">
+          Productos: ${this.productos.length}
+        </div>
+      </div>
+    `;
+  }
+}
+
+customElements.define(
+'producto-item', ProductoItem
+)
+import { LitElement } from 'lit';
+
+class CarritoCompras extends LitElement {
+  
+  static properties = {
+    productos: { type: Array }
+  };
+
+  constructor() {
+    super();
+  }
+Elementos reactivos
+
+Introducción a React, componentes
+
+React es una biblioteca de JavaScript creada por Facebook en 2013 (ahora Meta) para construir interfaces de usuario de manera eficiente. Su enfoque basado en componentes facilita dividir una aplicación en piezas pequeñas y reutilizables.
+
+React surgió en como una solución para crear interfaces complejas y mantenibles, basadas en el concepto de web components. Aunque no sigue el estándar, desarrolla sus propios mecanismos -muy similares.
+
+          https://react.dev/ 
+Introducción a React
+
+Con el tiempo React pasó de ser una librería para convertirse en un ecosistema abierto y descentralizado. En la actualidad React es la herramienta de desarrollo frontend más usada a nivel global, potenciada por complementos como Next.Js y React-Native, que amplían el enfoque a full-stack y mobile respectivamente.
+Introducción a React
+function Video({ video }) {
+ return (
+   <div>
+     <Thumbnail video={video} />
+     <a href={video.url}>
+       <h3>{video.title}</h3>
+       <p>{video.description}</p>
+     </a>
+     <LikeButton video={video} />
+   </div>
+ );
+}
+
+
+Ecosistema típico de librerías en React SPA
+1. Routing: React Router
+2. Gestión de estado: Redux Toolkit, Zustand, Recoil, Jotai, TanStack
+3. Estilos y UI: Tailwind CSS, MUI (Material UI), Chakra UI, Ant Design
+4. Formularios: React Hook Form
+5. API Call: Axios, Fetch
+6. Internacionalización (i18n): react-i18next
+7. Testing: Jest, React Testing Library, Cypress, Playwright
+8. Herramientas de construcción y desarrollo: Vite, ESLint, Prettier
+Introducción a React
+
+El corazón de React son los componentes, piezas independientes que representan partes de la interfaz, como botones o formularios. Al combinarlos, se construyen aplicaciones completas.
+
+Un componente puede definirse como una función que devuelve JSX, una sintaxis similar a HTML.
+Componentes en React
+
+Conceptos básicos en React
+Props, la comunicación entre componentes: permiten transmitir información de un componente padre a uno hijo. Funcionan como parámetros de funciones y hacen que los componentes sean reutilizables y flexibles.
+
+State, datos internos del componente: representa variables internas que cambian con el tiempo, como un contador o el valor de un input. Al modificarse, React vuelve a renderizar automáticamente el componente (propiedad "reactiva").
+
+Los Hooks son funciones especiales que permiten a los componentes funcionales usar estado y otras capacidades avanzadas de React. Son la base del desarrollo moderno en esta biblioteca.
+
+React maneja eventos como clicks o cambios en inputs con una sintaxis propia y un sistema de eventos virtual que optimiza el rendimiento respecto a JavaScript puro.
+
+Los formularios se controlan vinculando el valor de los inputs al estado. Esto permite validaciones, sincronización y un control más preciso de los datos.
+Conceptos básicos en React
+
+La composición permite crear componentes más complejos combinando otros más simples. React fomenta esta práctica en lugar de la herencia.
+
+Lifting State Up: cuando varios componentes necesitan acceder al mismo dato, el estado se eleva a un componente padre, que lo distribuye mediante props. Este patrón mantiene la lógica centralizada.
+
+React Router permite construir SPA, gestionando rutas sin recargar la página y ofreciendo una experiencia fluida al usuario.
+Conceptos básicos en React
+
+Props y State ; UseState y useEffect
+
+La forma actual de trabajar con componentes en React es definiendo componentes funcionales. Hasta hace un tiempo se proponían componentes de clase, pero están en desuso.
+
+Un componente básico tiene la forma que se ofrece en el código a la derecha.
+Introducción a React
+function Producto() {
+   return (
+       <div>
+           <h2>Título del producto</h2>
+           <img src="https://fotos.com/producto.jpg"} />
+           <p>Descripción del producto</p>
+           <p>Precio: $ 45.000</p>
+       </div>
+   );
+}
+
+export default Producto;
+
+La forma actual de trabajar con componentes en React es definiendo componentes funcionales. Hasta hace un tiempo se proponían componentes de clase, pero están en desuso.
+
+Un componente básico tiene la forma que se ofrece en el código a la derecha.
+Introducción a React
+function Producto({ titulo, imagen, descripcion, precio }) {
+   return (
+       <div>
+           <h2>{titulo || "Producto sin título"}</h2>
+           <img src={imagen || "https://placehold.co/400x400?text=Producto+sin+foto"} alt={titulo} />
+           <p>{descripcion || "Producto sin descripción"}</p>
+           <button>Agregar al carrito</button>
+           <p>Precio: ${precio || "Producto sin precio"}</p>
+       </div>
+   );
+}
+
+export default Producto;
+
+React Router
+
+Un router es un sistema que permite controlar la navegación entre diferentes vistas o páginas dentro de una aplicación. En el contexto del desarrollo web, el router se encarga de interpretar la URL que el usuario visita y decidir qué componente debe cargarse. En las aplicaciones de una sola página (SPA, Single Page Application), el router evita que se recargue toda la página al cambiar de vista, logrando una navegación más rápida y fluida.
+Introducción a React Router
+
+React Router es una librería oficial de React que permite implementar un sistema de rutas dentro de una aplicación de una sola página. Gracias a ella, los desarrolladores pueden definir qué componentes se deben renderizar según la URL actual, sin recargar el sitio completo. 
+
+React Router ofrece herramientas como <Routes>, <Route>, <Link>, useNavigate() y useParams() para manejar la navegación, los enlaces, los parámetros y las transiciones entre vistas de forma declarativa y eficiente.
+Introducción a React Router
+
+Existen distintos tipos de rutas. Las estáticas no reciben ningún parámetro (por ejemplo, /inicio o /contacto). 
+
+Las dinámicas cambian según los valores que se pasen a través de la URL (por ejemplo, /producto/:id) donde :id es un parámetro posicional (obligatorio) que indica qué elemento se debe mostrar. 
+
+También existen los parámetros nombrados (opcionales), conocidos como parámetros de consulta o query, que se pasan después del signo ? en la URL (por ejemplo, /productos?categoria=ropa&orden=asc). Estos permiten enviar información adicional de forma más flexible, sin alterar la estructura principal de la ruta.
+Introducción a React Router
+
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import App from "./App";
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+ <BrowserRouter>
+   <App />
+ </BrowserRouter>
+);
+Instalar React Router
+
+npm install react-router-dom
+
+En main.jsx se debe envolver <App /> con el componente <BrowserRouter>
+
+Introducción a React Router
+
+Luego en App.jsx se definen las rutas.
+
+Cada ruta tiene un path y el componente (element) que se cargará.
+
+La ruta comodín se usa habitualmente para la página not found.
+import { Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import About from "./pages/About";
+import NotFound from "./pages/NotFound";
+
+function App() {
+ return (
+   <Routes>
+     <Route path="/" element={<Home />} />
+     <Route path="/about" element={<About />} />
+     <Route path="/usuarios/:id" element={<UsuarioDetalle />} />
+     {/* Ruta comodín para páginas no encontradas */}
+     <Route path="*" element={<NotFound />} />
+   </Routes>
+ );
+}
+
+export default App;
+Introducción a React Router
+
+Dentro de cada página (que siempre son componentes) se definen los links.
+
+Se puede usar <Link /> que es equivalente al <a href=""> de HTML.
+
+También se puede usar el hook useNavigate(), que es similar a window.location.href de Javascript.
+import { Link, useNavigate } from "react-router-dom";
+
+function Navbar() {
+ const navigate = useNavigate();
+
+ return (
+   <nav>
+     <Link to="/">Inicio</Link>
+     <Link to="/about">Acerca</Link>
+     <button onClick={() => navigate("/")}>
+       Ir al inicio
+     </button>
+   </nav>
+ );
+}
+
+Introducción a React Router
+
+Para definir una ruta con un parámetro dinámico, se usan dos puntos (:)
+
+<Route path="/usuarios/:pais/:dni" element={<UsuarioDetalle />} />
+
+Aquí :id es un parámetro dinámico.
+
+Esto significa que una URL como /usuarios/25 o /usuarios/juan hará que se renderice el componente <UsuarioDetalle />
+Introducción a React Router
+
+Acceder al parámetro dentro del componente:
+
+Dentro del componente que se carga en esa ruta (UsuarioDetalle en este caso), se usa el hook useParams() de react-router-dom para leer el valor.
+import { useParams } from "react-router-dom";
+
+function UsuarioDetalle() {
+ const { pais, dni } = useParams();
+
+ return <h2>
+   Mostrando detalles del usuario con DNI: {dni}   Conectado desde {pais}
+ </h2>;
+}
+
+export default UsuarioDetalle;
+
+Introducción a React Router
+
+Navegar hacia una ruta con parámetro:
+
+Se puede navegar a una ruta dinámica usando:
+
+<Link to="/usuarios/10">
+Ver usuario 10</Link>
+
+Hook useNavigate()
+
+import { useNavigate } from "react-router-dom";
+
+function ListaUsuarios() {
+ const navigate = useNavigate();
+
+ const verUsuario = (id) => {
+   navigate(`/usuarios/${id}`);
+ };
+
+ return (
+   <button onClick={() => verUsuario(7)}>Ver usuario 7</button>
+ );
+}
+
+Introducción a React Router
+
+Se puede definir más de un parámetro:
+
+<Route path="/empresa/:empresaId/empleado/:empleadoId" element={<EmpleadoDetalle />} />
+
+Para obtenerlos:
+
+const { empresaId, empleadoId } = useParams();
+Introducción a React Router
+
+Diferencia entre params y query params
+
+Params → forman parte de la ruta (/usuarios/42)
+
+Query params → se pasan en la URL con ? (/usuarios/42?destacar=true)
+
+Para leer query params, se usa el hook useSearchParams():
+import { useSearchParams } from "react-router-dom";
+
+function BuscarUsuario() {
+ const { id } = useParams();
+ const [searchParams] = useSearchParams();
+ const destacado = searchParams.get("destacar");
+
+ return 
+   <p>Usuario {id} estará destacado {destacado}</p>;
+}
+
+Introducción a React Router
+
+Async y Await
+
+Eventos y manejo de formularios
+
+Renderizado condicional y listas
+
+Composición y 
+lifting state up
+
+Librerías de componentes
+
+Próximos pasos

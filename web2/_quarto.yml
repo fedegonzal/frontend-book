@@ -1,0 +1,144 @@
+project:
+  type: book
+  output-dir: _book
+
+lang: es
+
+book:
+  title: "Desarrollo Web 2"
+  author: "Federico Gonzalez Brizzio"
+  chapters:
+    - index.md
+    - part: "Fundamentos del desarrollo web moderno"
+      chapters:
+        - 00-javascript-moderno.md
+        - 01-asincronia-javascript.md
+        - 02-apis-rest.md
+        - 03-typescript-frontend.md
+        - 04-git-proyectos-web.md
+        - 05-nodejs-npm.md
+    - part: "Desarrollo basado en componentes"
+      chapters:
+        - 06-enfoque-componentes.md
+        - 07-spa-mpa.md
+        - 08-web-components.md
+        - 09-lit.md
+        - 10-arquitectura-frontend.md
+    - part: "Desarrollo web con React"
+      chapters:
+        - 11-introduccion-react.md
+        - 12-jsx-tsx.md
+        - 13-componentes-react.md
+        - 14-props-state.md
+        - 15-renderizado-condicional-listas.md
+        - 16-eventos-interaccion.md
+        - 17-formularios-react-hook-form.md
+        - 18-hooks-fundamentales.md
+        - 19-react-router.md
+        - 20-zustand.md
+        - 21-consumo-apis-react.md
+        - 22-librerias-componentes.md
+    - part: "Testing, integración y cierre"
+      chapters:
+        - 23-testing-react.md
+        - 24-integracion-ecommerce.md
+        - 25-despliegue-mantenimiento.md
+
+format:
+  pdf:
+    # Engine de compilacion PDF (LuaLaTeX soporta bien fuentes modernas)
+    pdf-engine: lualatex
+    # Tamano de papel
+    papersize: a4
+    # Quarto genera tabla de contenidos automaticamente
+    toc: true
+    # Numeracion de secciones/capitulos
+    number-sections: true
+    classoption:
+      # Permite que los capitulos empiecen en cualquier pagina (no solo impar)
+      - openany
+    # Fuentes principales del documento
+    mainfont: "Charter"
+    sansfont: "Lato"
+    tbl-colwidths: auto
+    highlight-style: github
+    # Bloque LaTeX inyectado en el preambulo del PDF
+    include-in-header:
+      text: |
+        % ---- Paquetes base ----
+        \usepackage[svgnames]{xcolor}
+        \usepackage{setspace}
+        \usepackage{framed}
+        \usepackage{emptypage}
+        \usepackage{etoolbox}
+        \usepackage[automark]{scrlayer-scrpage}
+
+        % ---- Colores y tipografia ----
+        \definecolor{shadecolor}{HTML}{F4F7F8}
+        \definecolor{EditorialLink}{HTML}{2C5A63}
+        \renewcommand{\familydefault}{\sfdefault}
+        \setstretch{1.35}
+        \setkomafont{disposition}{\rmfamily\bfseries}
+
+        % ---- Bloques de codigo y links ----
+        \makeatletter
+        \@ifundefined{Shaded}
+          {\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}}
+          {\renewenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}}
+        \makeatother
+        \AtBeginDocument{\hypersetup{hidelinks}}
+
+        % ---- Textos reutilizables y marcas ----
+        \newcommand{\booktitleheader}{Desarrollo Web 2}
+        \automark[part]{part}
+
+        % Front matter (TOC + index): sin linea horizontal en header
+        \KOMAoptions{headsepline=false}
+
+        % ---- Estilo "footonly": solo footer (sin header) ----
+        \newpairofpagestyles{footonly}{
+          \clearpairofpagestyles
+          \ifoot{\small\booktitleheader}
+          \ofoot{\small\pagemark}
+        }
+        % Se asegura que footonly no dibuje linea de cabecera
+        \RemoveLayersFromPageStyle{footonly}{scrheadings.head.sep.line}
+        \RemoveLayersFromPageStyle{plain.footonly}{scrheadings.head.sep.line}
+
+        % ---- Estilo principal (scrheadings): header + footer ----
+        \clearpairofpagestyles
+        \lehead{\small\booktitleheader}
+        \rohead{\small\headmark}
+        \ifoot{\small\booktitleheader}
+        \ofoot{\small\pagemark}
+        \renewcommand*{\partmark}[1]{\markboth{#1}{#1}}
+
+        % ---- Portada: inserta pagina en blanco despues del titulo ----
+        \let\oldmaketitle\maketitle
+        \renewcommand{\maketitle}{%
+          \oldmaketitle
+          \clearpage
+          \thispagestyle{empty}\null
+          \clearpage
+        }
+
+        % ---- TOC: usa estilo con solo footer ----
+        \let\oldtableofcontents\tableofcontents
+        \renewcommand{\tableofcontents}{%
+          \clearpage
+          \pagestyle{footonly}%
+          \renewcommand*{\chapterpagestyle}{footonly}%
+          \oldtableofcontents
+          \clearpage
+          \thispagestyle{empty}\null
+          \clearpage
+          \markboth{}{}%
+        }
+
+        % index.md arranca con solo footer
+        \renewcommand*{\chapterpagestyle}{footonly}
+        \renewcommand*{\partpagestyle}{empty}
+        \pagestyle{footonly}
+
+        % Desde la Parte 1: activar linea horizontal de header y estilo completo
+        \pretocmd{\part}{\clearpage\KOMAoptions{headsepline=true}\renewcommand*{\chapterpagestyle}{scrheadings}\pagestyle{scrheadings}}{}{}
