@@ -1,10 +1,10 @@
-# Autoría y colaboradores
+# Autoría
 
-Federico Gonzalez Brizzio es el autor principal de este libro y docente de la asignatura Desarrollo Web 2 en la Universidad Nacional de Tierra del Fuego (UNTDF). Su trabajo docente y profesional se orienta al desarrollo de software, la arquitectura de aplicaciones y la formación en tecnologías web contemporáneas. Este libro continúa el recorrido iniciado en Desarrollo Web 1 y organiza una segunda etapa centrada en herramientas, enfoques y prácticas habituales del desarrollo frontend moderno.
+Este libro es un trabajo colaborativo entre Federico Gonzalez Brizzio y Leonel Viera, docentes de la asignatura Desarrollo Web 2 en la Universidad Nacional de Tierra del Fuego (UNTDF). Ambos aportan su experiencia docente y profesional para organizar un recorrido que conecta fundamentos técnicos con prácticas actuales del desarrollo frontend.
 
-Nicolás Sartori participa en la revisión de contenidos y en el acompañamiento práctico de la materia. Su experiencia en desarrollo de software y gestión tecnológica aporta una mirada aplicada sobre la construcción de proyectos reales.
+Federico Gonzalez Brizzio es docente de la asignatura Desarrollo Web 2 en la Universidad Nacional de Tierra del Fuego (UNTDF). Su trabajo docente y profesional se orienta al desarrollo de software, la arquitectura de aplicaciones y la formación en tecnologías web contemporáneas. Este libro continúa el recorrido iniciado en Desarrollo Web 1 y organiza una segunda etapa centrada en herramientas, enfoques y prácticas habituales del desarrollo frontend moderno.
 
-Diego Abbá acompaña la línea visual y gráfica del material, retomando criterios de diseño editorial y comunicación visual presentes en la colección.
+Leonel Viera es también docente de Desarrollo Web 2 en la UNTDF. Su experiencia profesional se enfoca en el desarrollo frontend, la experiencia de usuario y la formación técnica. En este libro, Leonel aporta su perspectiva sobre la construcción de interfaces modernas, el consumo de APIs y la integración de herramientas actuales en proyectos reales.
 
 # Organización del libro
 

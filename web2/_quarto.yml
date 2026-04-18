@@ -6,7 +6,7 @@ lang: es
 
 book:
   title: "Desarrollo Web 2"
-  author: "Federico Gonzalez Brizzio"
+  author: "Federico Gonzalez Brizzio & Leonel Viera"
   chapters:
     - index.md
     - part: "Fundamentos del desarrollo web moderno"
