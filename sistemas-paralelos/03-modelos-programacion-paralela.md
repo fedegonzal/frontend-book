@@ -30,6 +30,8 @@ Este modelo es útil cuando las tareas son muchas, relativamente similares entre
 
 Puede pensarse en la conversión de un conjunto grande de imágenes. El proceso maestro mantiene la lista de archivos pendientes y asigna una imagen a cada worker disponible. Cada worker aplica la misma transformación, por ejemplo cambiar formato o reducir tamaño, y luego devuelve el resultado o informa que terminó. El maestro continúa repartiendo trabajo hasta completar todo el lote.
 
+![Esquema del modelo maestro-trabajadores para repartir tareas y reunir resultados.](assets/master-slave.png)
+
 Un esquema mínimo de pseudocódigo puede escribirse así:
 
 ```text
@@ -53,6 +55,8 @@ El modelo divide and conquer resuelve un problema descomponiéndolo en subproble
 Este paradigma es útil cuando el problema admite una descomposición natural y relativamente equilibrada.
 
 Un ejemplo más simple es la suma de un vector dividido en bloques. En lugar de recorrer todos los elementos en una sola secuencia, el conjunto de datos puede separarse en partes de tamaño semejante. Cada parte se procesa por separado y, al final, los subtotales se combinan para obtener el resultado global. Aunque muchas implementaciones de este paradigma usan recursión, la idea central puede entenderse también como una división del problema en partes comparables que luego se recomponen.
+
+![Patrón divide and conquer: partición del problema, resolución de subproblemas y recomposición final.](assets/divide-conquer.png)
 
 Un esquema mínimo de pseudocódigo puede escribirse así:
 
@@ -80,6 +84,8 @@ Su principal desafío consiste en gestionar correctamente las dependencias entre
 Este paradigma resulta especialmente útil cuando el trabajo puede describirse como una secuencia estable de transformaciones. Un caso reconocible es el procesamiento de datos provenientes de sensores, video o registros: una etapa lee, otra limpia, otra transforma y una última almacena o visualiza resultados.
 
 Un caso simple aparece en el procesamiento de formularios enviados desde un sitio web. Una primera etapa recibe los datos, una segunda valida los campos, una tercera normaliza el formato y una cuarta guarda la información en una base de datos. Mientras un formulario se encuentra en la etapa de almacenamiento, otro puede estar siendo validado y un tercero puede estar ingresando al sistema.
+
+![Modelo pipeline con etapas consecutivas que procesan datos en flujo.](assets/pipeline.png)
 
 Un esquema mínimo de pseudocódigo puede representarse de este modo:
 
@@ -146,3 +152,4 @@ En el próximo capítulo estas ideas se traducirán a APIs clásicas de programa
 - Indique qué papel cumplen los mensajes en el modelo de actores.
 - Justifique por qué MapReduce se asocia especialmente con problemas de gran volumen de datos.
 - Proponga un caso en el que maestro-esclavo sea una mejor elección que actores y explique por qué.
+- Analice una situación de procesamiento de datos o de simulación y justifique qué modelo elegiría entre maestro-esclavo, divide and conquer, pipeline, MapReduce o actores.

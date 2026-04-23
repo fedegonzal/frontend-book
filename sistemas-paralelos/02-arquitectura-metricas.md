@@ -23,6 +23,8 @@ Una clasificación clásica de las arquitecturas paralelas es la taxonomía de F
 
 En términos generales, SIMD resulta adecuado cuando hay gran regularidad en los datos y la operación aplicada es la misma. MIMD, en cambio, ofrece mayor flexibilidad y permite abordar problemas con tareas heterogéneas, dependencias más complejas o estrategias de sincronización variadas.
 
+![Taxonomía de Flynn para clasificar arquitecturas según la cantidad de flujos de instrucciones y de datos.](assets/flynn-arquitectura.png)
+
 ## Clasificación por organización física
 
 Otra clasificación central atiende al modo en que se organiza la memoria del sistema. Este criterio es decisivo porque modifica tanto la forma de programar como el costo de la comunicación.
@@ -35,9 +37,13 @@ También existen modelos híbridos, en los que cada nodo tiene memoria compartid
 
 Esta distinción ayuda a anticipar decisiones de diseño. Como se verá más adelante, la elección de una estrategia de paralelización suele estar condicionada por la arquitectura. Herramientas como OpenMP se ajustan de manera natural a memoria compartida, mientras que MPI responde mejor a memoria distribuida. En modelos híbridos, ambas estrategias suelen combinarse.
 
+![Comparación entre arquitecturas de memoria compartida, distribuida e híbrida.](assets/memoria-compartida-distribuida-hibrida.png)
+
 ## Jerarquía de memoria y localidad
 
 En arquitectura paralela no alcanza con conocer la cantidad de cores. También importa cómo acceden a los datos. La memoria principal es mucho más lenta que los registros y las memorias caché, por lo que el rendimiento depende en gran medida de la capacidad de reutilizar datos cercanos en tiempo o en espacio.
+
+![Jerarquía de memoria y relación entre cercanía al procesador, capacidad y latencia de acceso.](assets/jerarquia-memorias.png)
 
 La localidad temporal aparece cuando un dato utilizado recientemente vuelve a usarse en poco tiempo. Si una variable, una fila de una matriz o un bloque de datos acaba de cargarse en caché y el programa la necesita nuevamente enseguida, es más probable que ese acceso pueda resolverse sin volver a buscar la información en memoria principal. Dicho de forma simple, la localidad temporal mejora cuando un programa reutiliza pronto aquello que ya usó.
 
@@ -198,8 +204,9 @@ En el próximo capítulo se estudiarán modelos de programación paralela. Esa t
 - Defina localidad temporal y localidad espacial.
 - Explique con sus palabras qué problema intenta describir la ley de Amdahl.
 - Distinga problemas memory bound y compute bound.
-
+- Explique por qué el modelo Roofline ayuda a interpretar la diferencia entre una implementación limitada por memoria y otra limitada por cómputo.
 - Calcule el speed-up de un programa que tarda 24 segundos en forma secuencial y 6 segundos en forma paralela.
 - Calcule la eficiencia del caso anterior si se usaron 4 procesadores.
 - Suponga que la fracción secuencial de un programa es 0.2. Calcule el speed-up máximo teórico según Amdahl para 8 procesadores.
 - Interprete la siguiente situación: al pasar de 8 a 16 procesadores, el tiempo baja poco y la eficiencia cae con fuerza.
+- Proponga una situación en la que el rendimiento de un programa paralelo pueda verse afectado por accesos remotos en una arquitectura NUMA o por false sharing, y explique brevemente cuál sería el problema.

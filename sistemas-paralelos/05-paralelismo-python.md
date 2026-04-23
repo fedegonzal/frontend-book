@@ -2,13 +2,13 @@
 
 En este libro, Python funciona como lenguaje de trabajo para experimentar con conceptos de programación paralela. La elección no implica desconocer la importancia de lenguajes como C, que siguen siendo fundamentales cuando se busca control fino sobre memoria, hilos y cercanía con el hardware. Sin embargo, para un recorrido introductorio conviene priorizar una herramienta que permita concentrarse primero en los conceptos centrales del paralelismo sin agregar toda la complejidad sintáctica y operativa de un lenguaje de más bajo nivel.
 
-Esta decisión también responde a una consideración formativa y laboral. Para estudiantes de la UNTDF, Python constituye una herramienta especialmente útil porque aparece con frecuencia en tareas de automatización, análisis de datos, desarrollo de servicios, integración de sistemas y procesamiento de información, tanto en oportunidades locales dentro de Tierra del Fuego como en trabajos remotos vinculados con equipos de otras regiones. En una provincia donde la inserción profesional puede combinar actividades presenciales y a distancia, dominar Python amplía el campo de acción porque permite participar en proyectos técnicos diversos, sin exigir especialización inmediata en desarrollo de sistemas de bajo nivel.
+Esta decisión también responde a una consideración formativa y laboral. Python constituye una herramienta especialmente útil porque aparece con frecuencia en tareas de automatización, análisis de datos, desarrollo de servicios, integración de sistemas y procesamiento de información. Su presencia en contextos académicos, científicos y profesionales vuelve especialmente valioso usarlo como lenguaje de trabajo para introducir estrategias de paralelización sin exigir una especialización inmediata en desarrollo de sistemas de bajo nivel.
 
-Además, Python ocupa hoy un lugar central en inteligencia artificial, aprendizaje automático, ciencia de datos y cómputo científico. Bibliotecas como NumPy, Numba, PyTorch, JAX o TensorFlow forman parte del ecosistema con el que actualmente se construyen desde prototipos experimentales hasta sistemas productivos. Por ese motivo, trabajar con Python en este libro no solo facilita la comprensión de los fundamentos, sino que también conecta esos fundamentos con herramientas y problemas que los estudiantes probablemente volverán a encontrar en contextos académicos y profesionales reales.
+Además, Python ocupa hoy un lugar central en inteligencia artificial, aprendizaje automático, ciencia de datos y cómputo científico. Bibliotecas como NumPy, Numba, PyTorch, JAX o TensorFlow forman parte del ecosistema con el que actualmente se construyen desde prototipos experimentales hasta sistemas productivos. Por ese motivo, trabajar con Python en este libro no solo facilita la comprensión de los fundamentos, sino que también conecta esos fundamentos con herramientas y problemas frecuentes en contextos académicos y profesionales reales.
 
 ## Objetivos del capítulo
 
-- presentar herramientas de Python útiles para explorar paralelismo;
+- presentar herramientas de Python útiles para explorar paralelismo en CPU;
 - comparar enfoques basados en hilos, procesos y compilación JIT;
 - relacionar cada estrategia con el tipo de problema que conviene resolver;
 - señalar las limitaciones del lenguaje y sus implicancias prácticas;
@@ -16,23 +16,19 @@ Además, Python ocupa hoy un lugar central en inteligencia artificial, aprendiza
 
 ## Qué permite comparar Python
 
-En el resto del libro, Python resulta especialmente útil porque permite contrastar estrategias diferentes sobre problemas similares sin cambiar de entorno de trabajo en cada paso. Con relativa facilidad puede pasarse de una versión secuencial a una versión con hilos, otra con procesos, una versión compilada con Numba y, en capítulos posteriores, una formulación vectorizada con NumPy o una formulación con tensores orientada a GPU. Esa continuidad vuelve más visible qué cambia realmente cuando se modifica la forma de expresar el cálculo y, más adelante, también facilita extender la misma lógica hacia ejecución sobre GPU.
+En el resto del libro, Python resulta especialmente útil porque permite contrastar estrategias diferentes sobre problemas similares sin cambiar de entorno de trabajo en cada paso. Con relativa facilidad puede pasarse de una versión secuencial a una versión con hilos, otra con procesos y una versión compilada con Numba. Esa continuidad vuelve más visible qué cambia realmente cuando se modifica la forma de expresar el cálculo y, más adelante, también facilita extender la misma lógica hacia otros niveles de abstracción.
 
-Esta posibilidad comparativa tiene un valor didáctico importante. Ayuda a ver que el paralelismo no es una técnica única, sino un conjunto de decisiones sobre partición de datos, coordinación, costo de ejecución y nivel de abstracción. Justamente por eso Python funciona aquí menos como un fin en sí mismo que como una plataforma conveniente para observar, medir y contrastar estrategias distintas sobre una misma familia de problemas, desde el uso de workers explícitos hasta bibliotecas de tensores capaces de trabajar sobre CPU o GPU.
+Esta posibilidad comparativa tiene un valor didáctico importante. Ayuda a ver que el paralelismo no es una técnica única, sino un conjunto de decisiones sobre partición de datos, coordinación, costo de ejecución y nivel de abstracción. Justamente por eso Python funciona aquí menos como un fin en sí mismo que como una plataforma conveniente para observar, medir y contrastar estrategias distintas sobre una misma familia de problemas.
 
-## Un mapa inicial de herramientas
+## Herramientas centrales de este capítulo
 
-Antes de entrar en ejemplos concretos, conviene ordenar el panorama general de bibliotecas y enfoques disponibles en Python. No todas estas herramientas resuelven el mismo tipo de problema ni operan en el mismo nivel de abstracción. Algunas apuntan a coordinar hilos o procesos explícitos; otras buscan reformular el cálculo sobre arreglos o tensores para delegarlo a implementaciones más eficientes. No todas se desarrollan en este capítulo con el mismo detalle: aquí el foco estará puesto sobre todo en hilos, procesos y Numba, mientras que la vectorización con NumPy se retomará en el capítulo siguiente y el trabajo con GPU aparecerá más adelante.
-
-Entre las herramientas disponibles aparecen `threading`, `multiprocessing`, NumPy, Numba, PyTorch, JAX, TensorFlow y otras bibliotecas afines. 
+Antes de entrar en ejemplos concretos, conviene ordenar qué herramientas ocuparán el centro del capítulo. Aquí el foco estará puesto sobre todo en `threading`, `multiprocessing`, pools o executors y Numba en CPU. Se trata de herramientas distintas, pero todas permiten examinar una misma pregunta: cómo pasar de una versión secuencial en Python a variantes más eficientes cuando el problema exige trabajo intensivo de CPU o una mejor organización del cálculo.
 
 - `threading` y sus variantes permiten trabajar con concurrencia basada en hilos;
 - `multiprocessing` crea procesos independientes y evita la restricción principal del GIL para tareas intensivas de CPU;
-- NumPy ofrece vectorización y broadcasting, que se retomarán de manera específica en el capítulo siguiente;
-- Numba compila funciones Python y puede acercar el rendimiento al de implementaciones más cercanas al hardware, tanto en CPU como en GPU;
-- bibliotecas como PyTorch, TensorFlow y JAX combinan operaciones vectorizadas, aceleración y acceso a GPU en contextos más amplios de cálculo científico y aprendizaje automático.
+- Numba compila funciones Python y puede acercar el rendimiento al de implementaciones más cercanas al hardware sin abandonar el lenguaje de trabajo.
 
-Esta variedad es valiosa porque muestra que el paralelismo en Python no depende de una sola biblioteca. La decisión correcta depende del tipo de problema, del tamaño de los datos y del costo de coordinación.
+Más adelante se retomarán otras estrategias de optimización sobre arreglos y tensores, pero en este punto conviene concentrarse en estas herramientas porque constituyen una base importante para entender el paralelismo explícito en CPU.
 
 ## Limitaciones de Python para paralelismo
 
@@ -54,7 +50,7 @@ La comparación con C ayuda a precisar todavía más esta idea. En C, biblioteca
 
 Si en el futuro una variante sin GIL se vuelve la modalidad oficial y dominante de Python, esta distinción entre threads y process no perderá sentido, aunque probablemente cambie de énfasis. Los threads podrían ganar relevancia también para tareas CPU-bound, porque dejarían de arrastrar la restricción principal que hoy condiciona su rendimiento. Sin embargo, seguiría siendo importante diferenciarlos de los procesos: ambos modelos no solo se distinguen por su capacidad de cómputo, sino también por el modo en que comparten memoria, se aíslan entre sí, gestionan fallos y asumen costos de coordinación. Dicho de otro modo, un Python sin GIL volvería menos tajante la oposición actual entre threads para entrada/salida y procesos para cálculo intensivo, pero no eliminaría la necesidad de elegir entre memoria compartida e intérpretes aislados según la estructura real del problema.
 
-## Patrones para paralelizar loops en Python
+## Patrones básicos para paralelizar loops en Python
 
 Uno de los usos más comunes del paralelismo en Python consiste en transformar un loop secuencial en una ejecución repartida entre workers. Conviene, entonces, ordenar primero los patrones más habituales con los que suele plantearse esa transformación.
 
@@ -129,9 +125,11 @@ Para tareas I/O-bound, una estructura análoga con `ThreadPoolExecutor` suele se
 
 En términos prácticos, los executors suelen ser preferibles a la creación manual masiva porque reutilizan workers, simplifican la recolección de resultados y expresan mejor la intención del programa.
 
-## Secuencial, threads, procesos y Numba sobre un mismo problema
+## Secuencial, procesos y Numba sobre problemas clásicos
 
 Para comparar estrategias conviene partir de un problema pequeño y homogéneo. Un ejemplo típico es recorrer un vector y acumular resultados. En versión secuencial, el patrón es simple:
+
+![Transformación de un recorrido secuencial en una ejecución repartida entre trabajadores con reducción final.](assets/suma-secuencial-paralela.png)
 
 ```python
 def sum_elements(values):
@@ -165,7 +163,23 @@ if __name__ == "__main__":
 
 La idea importante es que la ganancia no proviene solo de usar una biblioteca diferente, sino de haber repartido los datos y de aceptar el costo de serialización y sincronización entre procesos.
 
-Una lógica análoga puede usarse para multiplicar matrices si el trabajo se divide por bloques de filas. En ese caso, cada proceso recibe un subconjunto de filas de la matriz `A`, calcula su bloque de salida usando la matriz `B` y luego los bloques parciales se reensamblan en la matriz resultado.
+Una lógica análoga puede usarse para multiplicar matrices si el trabajo se divide por bloques de filas. En este caso conviene partir primero de una versión secuencial breve, porque eso vuelve más clara la transición hacia las variantes paralelas.
+
+```python
+def matmul_sequential(matrix_a, matrix_b):
+	result = []
+	for row in matrix_a:
+		result_row = []
+		for j in range(len(matrix_b[0])):
+			total = 0
+			for k in range(len(matrix_b)):
+				total += row[k] * matrix_b[k][j]
+			result_row.append(total)
+		result.append(result_row)
+	return result
+```
+
+Si luego se reparte el trabajo por bloques de filas, cada proceso recibe un subconjunto de filas de la matriz `A`, calcula su bloque de salida usando la matriz `B` y luego los bloques parciales se reensamblan en la matriz resultado.
 
 ```python
 from multiprocessing import Pool
@@ -211,57 +225,6 @@ if __name__ == "__main__":
 
 Aquí reaparece una idea central del capítulo: paralelizar no consiste solo en repartir operaciones, sino también en decidir cómo particionar los datos y cómo recomponer luego el resultado total.
 
-Una variante útil consiste en trabajar con una versión transpuesta de `B`. De ese modo, cada producto punto se calcula entre dos filas, en lugar de recorrer una fila de `A` y una columna de `B` con accesos más dispersos.
-
-```python
-from multiprocessing import Pool
-
-
-def transpose(matrix):
-	return [list(row) for row in zip(*matrix)]
-
-
-def multiply_block_transposed(block, matrix_b_t):
-	result = []
-	for row_a in block:
-		result_row = []
-		for row_b_t in matrix_b_t:
-			total = 0
-			for k in range(len(row_a)):
-				total += row_a[k] * row_b_t[k]
-			result_row.append(total)
-		result.append(result_row)
-	return result
-
-
-if __name__ == "__main__":
-	matrix_a = [
-		[0, 1, 2],
-		[3, 4, 5],
-		[6, 7, 8],
-		[9, 10, 11],
-	]
-	matrix_b = [
-		[0, 1],
-		[2, 3],
-		[4, 5],
-	]
-	matrix_b_t = transpose(matrix_b)
-	row_blocks = [matrix_a[:2], matrix_a[2:]]
-
-	with Pool(processes=2) as pool:
-		partial_blocks = pool.starmap(
-			multiply_block_transposed,
-			[(block, matrix_b_t) for block in row_blocks],
-		)
-
-	matrix_c = []
-	for block in partial_blocks:
-		matrix_c.extend(block)
-```
-
-Esta estrategia suele dar mejores resultados porque mejora la localidad espacial (que impacta en la localidad de caché). En una representación habitual por listas de filas, recorrer una columna de `B` implica saltar entre estructuras separadas en memoria. En cambio, al transponer `B`, los datos que participan en cada producto quedan agrupados en una misma fila de `B_t`, de modo que el recorrido es más regular y la jerarquía de caché puede aprovecharse mejor. El algoritmo sigue haciendo la misma cantidad de operaciones, pero reduce parte del costo asociado al acceso a memoria.
-
 Con Numba, el mismo problema puede atacarse desde otra lógica: en lugar de coordinar múltiples procesos desde Python, se compila el cálculo y se deja que la biblioteca optimice la ejecución.
 
 ```python
@@ -276,7 +239,7 @@ def sum_numba(values):
 	return total
 ```
 
-Este enfoque es especialmente importante en el libro porque conecta con OpenMP a nivel conceptual y prepara el camino hacia vectorización y GPU.
+Este enfoque es especialmente importante en el libro porque conecta con OpenMP a nivel conceptual y permite contrastar una estrategia basada en compilación con otras basadas en workers explícitos.
 
 La misma lógica puede extenderse a una multiplicación de matrices escrita de manera explícita:
 
@@ -302,6 +265,88 @@ def matmul_numba(matrix_a, matrix_b):
 ```
 
 En este caso, el paralelismo aparece al repartir el cálculo de filas de la matriz resultado. La estructura del algoritmo sigue siendo clara, pero el costo del problema ya no está solo en acumular valores, sino en coordinar muchas operaciones sobre dos estructuras bidimensionales.
+
+## Un caso práctico transversal: Sobel en CPU
+
+Además de los ejemplos más clásicos, conviene introducir un problema que acompañará el resto del recorrido del libro: la detección de bordes mediante el operador de Sobel.
+
+En términos generales, Sobel aplica máscaras de convolución sobre una imagen en escala de grises para estimar cambios de intensidad en direcciones horizontal y vertical. A partir de esas respuestas parciales puede construirse una imagen de bordes. Desde el punto de vista del paralelismo, se trata de un caso útil porque trabaja sobre datos bidimensionales, exige recorrer vecinos y permite comparar con claridad distintas maneras de expresar un mismo cálculo.
+
+![Flujo general de aplicación del filtro de Sobel sobre una imagen en CPU.](assets/sobel.png)
+
+Una formulación secuencial mínima puede escribirse así:
+
+```python
+def sobel_sequential(image):
+	kernel_x = [
+		[-1, 0, 1],
+		[-2, 0, 2],
+		[-1, 0, 1],
+	]
+	kernel_y = [
+		[-1, -2, -1],
+		[0, 0, 0],
+		[1, 2, 1],
+	]
+
+	height = len(image)
+	width = len(image[0])
+	result = [[0.0 for _ in range(width)] for _ in range(height)]
+
+	for row in range(1, height - 1):
+		for col in range(1, width - 1):
+			gx = 0.0
+			gy = 0.0
+			for kr in range(3):
+				for kc in range(3):
+					pixel = image[row + kr - 1][col + kc - 1]
+					gx += pixel * kernel_x[kr][kc]
+					gy += pixel * kernel_y[kr][kc]
+			result[row][col] = abs(gx) + abs(gy)
+
+	return result
+```
+
+Esta versión deja ver con claridad la lógica básica del problema: para cada posición interior de la imagen, se toman vecinos cercanos, se aplican dos máscaras y luego se combinan los resultados parciales. También permite advertir por qué se trata de un problema intensivo en CPU cuando la imagen crece, ya que el cálculo debe repetirse para una gran cantidad de píxeles.
+
+Una primera aceleración razonable consiste en conservar la misma lógica general, pero compilarla con Numba sobre CPU:
+
+```python
+from numba import njit, prange
+
+
+@njit(parallel=True)
+def sobel_numba(image):
+	kernel_x = (
+		(-1, 0, 1),
+		(-2, 0, 2),
+		(-1, 0, 1),
+	)
+	kernel_y = (
+		(-1, -2, -1),
+		(0, 0, 0),
+		(1, 2, 1),
+	)
+
+	height = len(image)
+	width = len(image[0])
+	result = [[0.0 for _ in range(width)] for _ in range(height)]
+
+	for row in prange(1, height - 1):
+		for col in range(1, width - 1):
+			gx = 0.0
+			gy = 0.0
+			for kr in range(3):
+				for kc in range(3):
+					pixel = image[row + kr - 1][col + kc - 1]
+					gx += pixel * kernel_x[kr][kc]
+					gy += pixel * kernel_y[kr][kc]
+			result[row][col] = abs(gx) + abs(gy)
+
+	return result
+```
+
+En este punto no hace falta desarrollar una comparación experimental detallada. Sin embargo, sí conviene señalar una expectativa general: cuando el tamaño de la imagen es suficientemente grande, se espera que una versión compilada con Numba CPU reduzca de manera sustancial el tiempo de ejecución respecto de la versión secuencial escrita solo con loops de Python.
 
 ## Cómo elegir una estrategia
 
@@ -344,6 +389,15 @@ Debuggear programas paralelos exige observar más que el resultado final. En Pyt
 Una primera aproximación razonable consiste en medir tiempos con cuidado, observar la carga de CPU del sistema y contrastar resultados entre distintas configuraciones. Ese tipo de observación ya alcanza para detectar muchos errores de diseño, por ejemplo tareas demasiado pequeñas para justificar procesos o uso de threads en problemas claramente CPU-bound.
 
 Por ese motivo, profiling y debugging deben leerse aquí como prácticas de observación básica: medir, comparar, repetir y buscar explicaciones consistentes para el comportamiento del programa.
+
+## Una tabla de síntesis del capítulo
+
+| Estrategia | Conviene usarla cuando | Ventaja principal | Límite principal |
+|---|---|---|---|
+| Versión secuencial | el problema es pequeño o se necesita una línea de base clara | simplicidad y facilidad de inspección | no aprovecha varios cores |
+| `threading` | el trabajo es I/O-bound o la coordinación entre tareas pesa más que el cálculo | bajo costo de coordinación y modelo directo de concurrencia | el GIL limita su utilidad en tareas CPU-bound |
+| `multiprocessing` | el problema es CPU-bound y puede dividirse en bloques independientes | paralelismo real entre procesos y evita el GIL | serialización, copia de datos y mayor overhead |
+| Numba CPU | se quiere acelerar cálculo numérico sin salir de Python | compilación JIT y mejor aprovechamiento de CPU | exige código compatible y no reemplaza toda estrategia de partición |
 
 ## Ejercicios del capítulo
 

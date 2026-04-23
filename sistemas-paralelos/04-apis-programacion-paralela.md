@@ -1,8 +1,8 @@
 # APIs de programación paralela
 
-Luego de estudiar modelos de diseño, conviene presentar algunas APIs clásicas que han tenido un papel central en la programación paralela. Estas herramientas no solo permiten implementar soluciones, sino que también representan enfoques distintos según el tipo de arquitectura disponible.
+Luego de estudiar modelos de diseño, conviene presentar algunas APIs clásicas que han tenido un papel relevante en la programación paralela. Estas herramientas no solo permiten implementar soluciones, sino que también representan enfoques distintos según el tipo de arquitectura disponible.
 
-Aunque en este libro el trabajo aplicado se desarrolla principalmente con Python, conviene conocer estas APIs porque siguen siendo una referencia central para entender cómo se programa cerca del hardware y por qué muchas herramientas de más alto nivel toman ideas de estos modelos.
+Aunque en este libro el trabajo aplicado se desarrolla principalmente con Python, conviene conocer estas APIs porque siguen siendo una referencia importante para entender cómo se programa cerca del hardware y por qué muchas herramientas de más alto nivel toman ideas de estos modelos.
 
 ## Objetivos del capítulo
 
@@ -18,7 +18,7 @@ Pthreads, OpenMP y MPI forman una tríada clásica porque condensan tres modos d
 
 ## Pthreads
 
-Pthreads es una API POSIX orientada a la programación con hilos en sistemas de memoria compartida. Su importancia histórica radica en ofrecer una forma estandarizada de crear, coordinar y sincronizar hilos de ejecución. En lenguajes como C, C++ y Fortran ha sido una herramienta fundamental para trabajar con paralelismo a bajo nivel.
+Pthreads es una API POSIX orientada a la programación con hilos en sistemas de memoria compartida. Su importancia histórica radica en ofrecer una forma estandarizada de crear, coordinar y sincronizar hilos de ejecución. En lenguajes como C, C++ y Fortran ha sido una herramienta importante para trabajar con paralelismo a bajo nivel.
 
 Pthreads conviene cuando se necesita control detallado sobre la creación de hilos, la asignación de trabajo y la sincronización. Ese control fino es una fortaleza, pero también aumenta la complejidad. Un mutex permite asegurar exclusión mutua sobre una sección crítica, es decir, impedir que dos hilos modifiquen al mismo tiempo un mismo dato compartido. Las variables compartidas son justamente los datos accesibles por varios hilos, y por eso deben protegerse o coordinarse con cuidado. Las barreras obligan a que varios hilos esperen hasta alcanzar un mismo punto de ejecución antes de continuar, mientras que las variables de condición permiten suspender un hilo hasta que se cumpla cierto estado o evento.
 
@@ -28,7 +28,7 @@ En términos de diseño, Pthreads resulta útil para entender qué significa rea
 
 ## OpenMP
 
-OpenMP es una API orientada a memoria compartida que simplifica la incorporación de paralelismo mediante directivas del compilador. Se usa principalmente con C, C++ y Fortran, y resulta especialmente adecuada para paralelizar bucles y secciones de código en equipos con múltiples núcleos.
+OpenMP es una API orientada a memoria compartida que simplifica la incorporación de paralelismo mediante directivas del compilador. Se usa principalmente con C, C++ y Fortran, y resulta adecuada para paralelizar bucles y secciones de código en equipos con múltiples núcleos.
 
 En el recorrido del libro, OpenMP cumple una doble función: por un lado, es una referencia estándar del área; por otro, sirve como antecedente conceptual para entender herramientas en Python que ofrecen estrategias semejantes.
 
@@ -119,7 +119,7 @@ Esta tabla permite advertir una diferencia central: no todas las APIs atacan el 
 
 ## Multiplicación de matrices como caso de estudio
 
-La multiplicación de matrices ocupa un lugar central en este libro porque reúne varias razones pedagógicas y técnicas a la vez. Desde el punto de vista conceptual, permite ver con claridad cómo se descompone un problema, cómo se distribuyen filas, columnas o bloques y cómo se recomponen luego los resultados parciales. Desde el punto de vista del costo, se trata de una tarea suficientemente intensiva como para que las decisiones de paralelización, acceso a memoria y sincronización tengan efectos visibles en el rendimiento. Además, posee gran versatilidad matemática: aparece en álgebra lineal, simulación numérica, gráficos por computadora, procesamiento de señales, aprendizaje automático y numerosos problemas científicos e ingenieriles. Por ese motivo, funciona como un ejemplo especialmente útil para conectar fundamentos teóricos, diseño de algoritmos y aplicaciones reales.
+La multiplicación de matrices aparece de manera recurrente en este libro porque reúne varias razones pedagógicas y técnicas a la vez. Desde el punto de vista conceptual, permite ver con claridad cómo se descompone un problema, cómo se distribuyen filas, columnas o bloques y cómo se recomponen luego los resultados parciales. Desde el punto de vista del costo, se trata de una tarea suficientemente intensiva como para que las decisiones de paralelización, acceso a memoria y sincronización tengan efectos visibles en el rendimiento. Además, posee gran versatilidad matemática: aparece en álgebra lineal, simulación numérica, gráficos por computadora, procesamiento de señales, aprendizaje automático y numerosos problemas científicos e ingenieriles. Por ese motivo, funciona como un ejemplo útil para conectar fundamentos teóricos, diseño de algoritmos y aplicaciones reales.
 
 Desde el punto de vista del diseño, la multiplicación de matrices puede leerse de varias maneras:
 
@@ -151,7 +151,7 @@ result_blocks = comm.gather(local_c, root=0)
 
 El interés de este fragmento no está en los detalles de implementación, sino en la secuencia de diseño: repartir filas de `A`, difundir `B`, calcular un bloque local de `C` y reunir luego los resultados parciales. Esa estructura permite ver con claridad dónde aparece el costo de comunicación y dónde se concentra el cómputo local.
 
-Este ejemplo es valioso porque muestra que una misma tarea puede expresarse con APIs diferentes, pero la estrategia concreta cambia con la arquitectura y con el costo de sincronización o transferencia.
+Este ejemplo permite ver que una misma tarea puede expresarse con APIs diferentes, pero la estrategia concreta cambia con la arquitectura y con el costo de sincronización o transferencia.
 
 ## Cierre del capítulo
 
@@ -168,7 +168,6 @@ En el próximo capítulo el foco estará puesto en las herramientas disponibles 
 - Utilice un ejemplo para explicar qué se entiende por un enfoque híbrido en programación paralela.
 - Compare el tipo de control que ofrecen Pthreads y OpenMP sobre la ejecución paralela.
 - Explique qué función cumplen `scatter`, `gather` y `reduce` en MPI.
-
 - Proponga qué API sería más adecuada para un clúster de computadoras y justifique la respuesta.
 - Describa qué dificultades podrían aparecer al paralelizar una multiplicación de matrices.
 - Indique en qué situación OpenMP podría ser preferible a Pthreads en memoria compartida.

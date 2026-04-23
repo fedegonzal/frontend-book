@@ -29,6 +29,8 @@ Comprender esta modalidad es importante porque el paralelismo no reemplaza por c
 
 Un ejemplo simple ayuda a ver esta diferencia. Si se desea sumar los valores `(40 + 20 + 10 + 60)`, una implementación secuencial realiza una acumulación lineal: primero suma `(40 + 20)`, luego agrega `10` y finalmente `60`. En cambio, una descomposición paralela puede organizar el mismo cálculo en dos sumas parciales independientes, por ejemplo `(40 + 20)` y `(10 + 60)`, para luego combinar ambos resultados. El problema es el mismo, pero cambia la forma de organizar el trabajo.
 
+![Comparación entre una suma secuencial y una descomposición paralela basada en resultados parciales.](assets/suma-secuencial-paralela.png)
+
 Un pseudocódigo mínimo permite ver con más claridad esa reorganización:
 
 ```text
@@ -59,6 +61,8 @@ Sin embargo, ese crecimiento no podía traducirse indefinidamente en aumentos li
 
 La respuesta consistió en orientar la evolución de los procesadores hacia la integración de varios núcleos dentro de un mismo chip. En lugar de depender solo de un núcleo más veloz, comenzó a ganar importancia la posibilidad de ejecutar varias tareas o varias partes de un mismo problema en paralelo. En el mercado de consumo, esta transición se volvió especialmente visible con familias de procesadores de doble núcleo, entre ellas Intel Core 2 Duo, que ayudaron a consolidar la idea de que el rendimiento futuro dependería cada vez más de explotar concurrencia y paralelismo, y no únicamente de aumentar megahertz.
 
+![Cambio de estrategia en el hardware: del aumento de frecuencia al aprovechamiento de múltiples núcleos.](assets/monocore-multicore.png)
+
 Este cambio tuvo consecuencias directas sobre el software. Mientras en la etapa mononúcleo gran parte de la mejora podía obtenerse por renovación de hardware, la era multicore exigió programas capaces de distribuir trabajo entre varios núcleos. Por ese motivo, estudiar paralelismo dejó de ser una cuestión reservada a supercomputadoras o a nichos especializados y pasó a convertirse en un problema general del desarrollo de software contemporáneo.
 
 ## Los límites de la computación secuencial
@@ -77,6 +81,8 @@ La computación distribuida agrega otra dimensión: los procesadores o nodos pue
 
 Una comparación breve permite aclarar la distinción. Si en una computadora se descarga un archivo mientras se reproduce música y se edita un documento, hay concurrencia: varias tareas avanzan en el mismo intervalo, aunque no cooperan para resolver un único problema. En cambio, si una suma grande de datos se divide en bloques para que varios núcleos calculen subtotales y luego se integren en un único resultado, hay paralelismo. En ambos casos puede haber actividad simultánea, pero solo en el segundo existe cooperación directa sobre una misma tarea.
 
+![Diferencias conceptuales entre concurrencia, paralelismo y computación distribuida.](assets/concurrencia-paralelismo-distribucion.png)
+
 ## Niveles de paralelismo
 
 Conviene distinguir distintos niveles de paralelismo porque no todos operan en la misma escala ni exigen el mismo tipo de intervención por parte de quien programa. Algunos aparecen cerca del hardware y funcionan de manera casi transparente, mientras que otros requieren decisiones explícitas sobre cómo dividir trabajo, datos y sincronización.
@@ -89,7 +95,7 @@ Distinguir estos niveles es importante porque la mejora de rendimiento no siempr
 
 ## Observación del uso de CPU
 
-En los trabajos prácticos conviene observar la carga de cada core y no solo un porcentaje global de CPU. Esa diferencia es importante porque un programa puede mostrar un uso alto del procesador en términos generales y, sin embargo, seguir concentrando casi todo su trabajo en un único núcleo. Mirar la actividad por core permite detectar con más claridad si una implementación realmente distribuye el trabajo o si mantiene un comportamiento predominantemente secuencial.
+Al analizar una implementación conviene observar la carga de cada core y no solo un porcentaje global de CPU. Esa diferencia es importante porque un programa puede mostrar un uso alto del procesador en términos generales y, sin embargo, seguir concentrando casi todo su trabajo en un único núcleo. Mirar la actividad por core permite detectar con más claridad si una implementación realmente distribuye el trabajo o si mantiene un comportamiento predominantemente secuencial.
 
 En Linux, una primera herramienta útil es `top`, disponible desde la línea de comandos. Permite ver procesos activos, consumo de CPU y memoria, y sirve como punto de partida para observar qué ocurre mientras se ejecuta un programa. También existen alternativas más visuales, como `htop` o `btop`, que facilitan la lectura porque muestran barras por núcleo, colores y una organización más clara de los procesos en ejecución. Para los fines de este libro, cualquiera de estas herramientas resulta suficiente siempre que permita responder una pregunta simple: si el programa intenta paralelizar trabajo, ¿se reparte efectivamente entre varios cores o no?
 

@@ -1,8 +1,8 @@
 # Computación con GPU
 
-En las últimas décadas, las unidades de procesamiento gráfico (GPU) dejaron de ser dispositivos dedicados exclusivamente al renderizado visual y pasaron a ocupar un lugar central en la computación paralela. Este cambio no responde solo a una evolución del hardware gráfico, sino también a una transformación más amplia en la naturaleza de los problemas computacionales contemporáneos. Cada vez con mayor frecuencia, resulta necesario aplicar la misma operación sobre grandes volúmenes de datos, ya sea en simulaciones numéricas, procesamiento de imágenes, análisis de señales o aprendizaje automático. En ese contexto, las GPU ofrecieron una respuesta especialmente eficaz.
+En las últimas décadas, las unidades de procesamiento gráfico (GPU) dejaron de ser dispositivos dedicados exclusivamente al renderizado visual y pasaron a ocupar un lugar relevante en la computación paralela. Este cambio no responde solo a una evolución del hardware gráfico, sino también a una transformación más amplia en la naturaleza de los problemas computacionales contemporáneos. Cada vez con mayor frecuencia, resulta necesario aplicar la misma operación sobre grandes volúmenes de datos, ya sea en simulaciones numéricas, procesamiento de imágenes, análisis de señales o aprendizaje automático. En ese contexto, las GPU se volvieron una alternativa frecuente para este tipo de tareas.
 
-Su importancia proviene de una arquitectura pensada para sostener una enorme cantidad de operaciones similares de manera concurrente. A diferencia de una CPU, que suele privilegiar la ejecución rápida y flexible de un número más reducido de hilos complejos, una GPU organiza sus recursos para maximizar el throughput sobre tareas altamente regulares. Por ese motivo, no se trata simplemente de un procesador “más rápido”, sino de un dispositivo con una lógica de ejecución distinta, cuya ventaja aparece cuando el problema contiene suficiente paralelismo de datos.
+Su importancia proviene de una arquitectura pensada para sostener una gran cantidad de operaciones similares de manera concurrente. A diferencia de una CPU, que suele privilegiar la ejecución rápida y flexible de un número más reducido de hilos complejos, una GPU organiza sus recursos para maximizar el throughput sobre tareas altamente regulares. Por ese motivo, no se trata simplemente de un procesador “más rápido”, sino de un dispositivo con una lógica de ejecución distinta, cuya ventaja aparece cuando el problema contiene suficiente paralelismo de datos.
 
 Comprender este cambio de perspectiva resulta importante dentro del recorrido del libro. Hasta aquí se estudiaron hilos, procesos, vectorización y estrategias de paralelización en CPU. El paso hacia GPU no reemplaza esas ideas, sino que las continúa en una escala distinta. Muchas de las preguntas que ya se formularon sobre partición del trabajo, acceso a memoria y medición de rendimiento siguen siendo relevantes, aunque ahora en una arquitectura con reglas propias de organización, memoria y ejecución.
 
@@ -12,26 +12,28 @@ Comprender este cambio de perspectiva resulta importante dentro del recorrido de
 - presentar de manera general el modelo de ejecución de CUDA;
 - explicar los principales factores que influyen en el rendimiento de un kernel;
 - introducir tipos de memoria y conceptos como coalescing, occupancy y warp divergence;
-- incorporar criterios básicos de debugging y profiling para kernels GPU.
-- incorporar PyTorch como vía de acceso de alto nivel a CPU y GPU;
+- incorporar criterios básicos de debugging y profiling para kernels GPU;
+- presentar PyTorch GPU como vía de acceso de alto nivel al trabajo con tensores sobre aceleradores.
 
-## Por qué las GPU ocupan un lugar central
+## El lugar de las GPU en este recorrido
 
-Las GPU se volvieron especialmente relevantes porque permiten ejecutar una enorme cantidad de operaciones similares sobre grandes volúmenes de datos. Esta característica las hace adecuadas para problemas donde el paralelismo de datos es dominante, por ejemplo procesamiento de imágenes, simulaciones numéricas y entrenamiento de redes neuronales.
+Las GPU se volvieron relevantes porque permiten ejecutar una gran cantidad de operaciones similares sobre grandes volúmenes de datos. Esta característica las hace adecuadas para problemas donde el paralelismo de datos es dominante, por ejemplo procesamiento de imágenes, simulaciones numéricas y entrenamiento de redes neuronales.
 
 Conviene notar que esta ventaja no proviene solo de tener muchos núcleos. También depende de una arquitectura orientada a ocultar latencias, sostener alto ancho de banda de memoria y ejecutar miles de hilos ligeros sobre un mismo dispositivo. Esa lógica es diferente de la de una CPU generalista, que suele dedicar más recursos a la ejecución rápida de unos pocos hilos complejos.
 
 ## Qué caracteriza a una GPU
 
-Una GPU dispone de una gran cantidad de núcleos especializados y de un ancho de banda de memoria muy elevado en comparación con la memoria RAM convencional. Estas características la hacen especialmente apta para tareas masivas y repetitivas sobre grandes volúmenes de datos.
+Una GPU dispone de una gran cantidad de núcleos especializados y de un ancho de banda de memoria muy elevado en comparación con la memoria RAM convencional. Estas características la hacen apta para tareas masivas y repetitivas sobre grandes volúmenes de datos.
 
 En este capítulo conviene distinguir entre dos familias de GPU que responden a contextos de uso diferentes. Por un lado, una GPU de consumo como la NVIDIA GeForce RTX 4090 permite pensar el paralelismo masivo en una estación de trabajo personal. Se trata de una GPU con 16384 núcleos CUDA, 24 GB de memoria GDDR6X y un diseño orientado tanto a gráficos avanzados como a creación de contenido, desarrollo y experimentación con modelos de inteligencia artificial en escala personal.
 
-Por otro lado, una GPU de centro de datos como la NVIDIA H100 representa otra escala de diseño y de uso. Basada en la arquitectura Hopper, incorpora Tensor Cores de cuarta generación y está pensada para entrenamiento e inferencia de modelos grandes, computación científica y análisis de datos en servidores. En sus configuraciones más difundidas ofrece 80 GB de memoria HBM3, un ancho de banda de memoria del orden de 3.35 TB/s y enlaces NVLink de hasta 900 GB/s entre GPU, rasgos que la vuelven especialmente adecuada para clústeres y sistemas multi-GPU. 
+Por otro lado, una GPU de centro de datos como la NVIDIA H100 representa otra escala de diseño y de uso. Basada en la arquitectura Hopper, incorpora Tensor Cores de cuarta generación y está pensada para entrenamiento e inferencia de modelos grandes, computación científica y análisis de datos en servidores. En sus configuraciones más difundidas ofrece 80 GB de memoria HBM3, un ancho de banda de memoria del orden de 3.35 TB/s y enlaces NVLink de hasta 900 GB/s entre GPU, rasgos que la vuelven adecuada para clústeres y sistemas multi-GPU. 
 
 Más allá del modelo puntual, lo importante es comprender el principio general: la GPU ofrece paralelismo masivo, aunque bajo reglas de programación distintas de las de una CPU tradicional.
 
 En términos generales, una CPU optimiza latencia y control. Una GPU optimiza throughput (rendimiento), es decir, la cantidad total de trabajo completado sobre un gran conjunto de datos. Por ese motivo, una GPU no siempre es la mejor elección para cualquier algoritmo. Su ventaja aparece cuando el problema contiene muchas operaciones similares e independientes.
+
+![Comparación esquemática entre la organización interna de una CPU y una GPU.](assets/cpu-gpu.png)
 
 Antes de pasar a los modelos de programación, conviene interpretar qué enseñan realmente estas especificaciones. La cantidad de núcleos es un dato relevante, pero no basta por sí sola para comprender el comportamiento de una GPU. También importan la memoria disponible, el ancho de banda, la posibilidad de comunicar varias GPU entre sí y, sobre todo, el tipo de carga que se quiere ejecutar. Dicho de forma simple, una GPU no se elige solo por tener “más cores”, sino por la relación entre arquitectura, memoria y clase de problema. Con este marco, resulta más claro por qué el estudio de CUDA, de la jerarquía de memoria y de la organización en threads, blocks y grids es necesario para entender cómo se aprovecha realmente este hardware.
 
@@ -49,9 +51,11 @@ Un modo simple de leer esta estructura es el siguiente:
 
 En este contexto, conviene introducir una noción básica: un kernel es la función que se ejecuta sobre la GPU. A diferencia de una función secuencial tradicional, no se invoca para producir una sola trayectoria de ejecución, sino para que una gran cantidad de hilos ejecuten el mismo código sobre datos distintos. Dicho de forma simple, el kernel contiene la lógica de la operación que se quiere aplicar masivamente, mientras que la grilla y los bloques determinan cuántas veces y cómo se distribuye esa ejecución sobre el hardware.
 
+![Organización jerárquica de la ejecución en CUDA: grid, bloques y threads.](assets/grid-block-thread.png)
+
 ## Alternativas a CUDA
 
-Aunque CUDA ocupa un lugar central en la introducción a la programación sobre GPU, no constituye la única alternativa disponible. Su ventaja pedagógica radica en que permite presentar con claridad ideas como `thread`, `block`, `grid`, jerarquía de memoria y configuración de ejecución dentro de un ecosistema muy consolidado. Sin embargo, existen otros caminos para trabajar con aceleradores, especialmente cuando se busca portabilidad entre fabricantes o un nivel de abstracción diferente.
+Aunque CUDA ocupa un lugar importante en la introducción a la programación sobre GPU, no constituye la única alternativa disponible. Su ventaja pedagógica radica en que permite presentar con claridad ideas como `thread`, `block`, `grid`, jerarquía de memoria y configuración de ejecución dentro de un ecosistema muy consolidado. Sin embargo, existen otros caminos para trabajar con aceleradores, especialmente cuando se busca portabilidad entre fabricantes o un nivel de abstracción diferente.
 
 Una familia importante de alternativas está formada por modelos más portables, como OpenCL o SYCL, que procuran ofrecer una vía de programación menos atada a un único proveedor de hardware. También existen bibliotecas y frameworks de más alto nivel, como PyTorch o JAX, que permiten expresar operaciones sobre tensores sin escribir kernels de bajo nivel en cada caso. En esos entornos, buena parte del trabajo se delega a bibliotecas optimizadas que luego se ejecutan sobre GPU cuando el hardware y el backend lo permiten.
 
@@ -59,7 +63,7 @@ Por ese motivo, conviene entender la elección de CUDA en este capítulo como un
 
 ## Un kernel mínimo con Numba
 
-En este capítulo se introduce el uso de GPU desde Python mediante Numba. Esta estrategia resulta especialmente adecuada para el enfoque didáctico del libro, ya que permite acercarse a conceptos de GPU sin abandonar el lenguaje principal de trabajo. Al mismo tiempo, Numba conserva de manera bastante directa el modelo de ejecución asociado a CUDA: kernels, grids, blocks, threads y cálculo explícito de índices. Por ese motivo, funciona como una puerta de entrada pedagógicamente valiosa, porque permite estudiar cómo se organiza el trabajo en una GPU sin pasar de inmediato a un entorno de más bajo nivel como CUDA C o C++, ni tampoco a un entorno de más alto nivel como PyTorch donde muchos de esos detalles quedan ocultos.
+En este capítulo se introduce el uso de GPU desde Python mediante Numba. Esta estrategia resulta adecuada para el enfoque didáctico del libro, ya que permite acercarse a conceptos de GPU sin abandonar el lenguaje principal de trabajo. Al mismo tiempo, Numba conserva de manera bastante directa el modelo de ejecución asociado a CUDA: kernels, grids, blocks, threads y cálculo explícito de índices. Por ese motivo, ofrece una aproximación útil para estudiar cómo se organiza el trabajo en una GPU sin pasar de inmediato a un entorno de más bajo nivel como CUDA C o C++, ni tampoco a un entorno de más alto nivel como PyTorch donde muchos de esos detalles quedan ocultos.
 
 Dicho de otro modo, ofrece una abstracción intermedia: reduce parte de la complejidad sintáctica, pero no oculta los conceptos fundamentales que conviene comprender en una introducción a la programación sobre GPU.
 
@@ -104,7 +108,7 @@ También conviene distinguir esta anotación de otras que aparecen en Numba. `@j
 
 ## Un ejemplo bidimensional: multiplicación de matrices
 
-La suma de vectores permite introducir el caso más simple, donde cada hilo se asocia con una única posición de un arreglo unidimensional. Un paso natural consiste en extender esa idea a un problema bidimensional, como la multiplicación de matrices. Este ejemplo resulta especialmente valioso porque retoma una operación ya trabajada en capítulos anteriores y, al mismo tiempo, anticipa por qué en GPU la organización de accesos a memoria pasa a ser tan importante.
+La suma de vectores permite introducir el caso más simple, donde cada hilo se asocia con una única posición de un arreglo unidimensional. Un paso natural consiste en extender esa idea a un problema bidimensional, como la multiplicación de matrices. Este ejemplo resulta útil porque retoma una operación ya trabajada en capítulos anteriores y, al mismo tiempo, anticipa por qué en GPU la organización de accesos a memoria pasa a ser tan importante.
 
 Una versión introductoria, sin optimizaciones adicionales, puede escribirse así:
 
@@ -163,53 +167,23 @@ Por ese motivo, dos decisiones de configuración pueden producir tiempos muy dis
 
 En términos introductorios, conviene quedarse con esta idea: el rendimiento en GPU depende de la interacción entre cómputo, memoria y configuración de ejecución. No alcanza con que el código "corra en la GPU".
 
-## Bibliotecas de alto nivel para CPU y GPU
+## PyTorch sobre GPU
 
-Después de una primera aproximación con Numba, conviene ampliar la mirada hacia herramientas de más alto nivel. En contextos prácticos, muchas aplicaciones no trabajan escribiendo kernels explícitos, sino operando sobre tensores mediante bibliotecas que ya integran implementaciones optimizadas para CPU y GPU. Entre las más difundidas se encuentran PyTorch, TensorFlow y JAX. Aunque difieren en objetivos y estilo de uso, comparten una idea central: permitir que buena parte del cálculo se exprese como operaciones sobre estructuras completas de datos, delegando la ejecución eficiente a bibliotecas y backends especializados.
+Después de la aproximación con Numba, conviene pasar a una vía de más alto nivel. En este punto ya no hace falta presentar desde cero la idea de tensor, porque ese trabajo se introdujo en el capítulo anterior. Lo nuevo aquí es el dispositivo: cómo se trasladan tensores a un acelerador, cómo se ejecutan allí las operaciones y por qué el costo total de una solución GPU depende no solo del cómputo, sino también de las transferencias.
 
-Desde el punto de vista pedagógico, este pasaje resulta importante porque muestra otro nivel de abstracción. Con Numba, el foco está puesto en cómo se organiza un kernel, cómo se calcula un índice y cómo se configura un grid. Con bibliotecas como PyTorch, TensorFlow o JAX, en cambio, el foco se desplaza hacia operaciones sobre tensores y hacia el movimiento de datos entre CPU y GPU. El cambio no invalida lo anterior: al contrario, permite comprender que muchas herramientas de uso real ocultan parte de esos detalles de bajo nivel, pero siguen apoyándose en los mismos principios generales de paralelismo de datos y aceleración sobre hardware especializado.
+Desde el punto de vista pedagógico, este pasaje muestra otra escala de abstracción. Con Numba, el foco está en kernels, índices y configuración de ejecución. Con PyTorch GPU, en cambio, el foco se desplaza hacia el trabajo sobre tensores y hacia la decisión de dónde se ejecuta el cálculo. El cambio no invalida lo anterior: permite contrastar dos niveles de trabajo sobre el mismo tipo de hardware.
 
-Además, cuando no se dispone de GPU local, entornos como Google Colab permiten experimentar con varias de estas herramientas de manera razonable. Esa disponibilidad resulta importante porque, también en estos marcos de más alto nivel, conviene observar cómo cambian los resultados al modificar tamaño de datos, dispositivo de ejecución o volumen de transferencia entre CPU y GPU.
+En entornos reales, esta segunda vía tiene un papel importante en aprendizaje automático, procesamiento de imágenes y cálculo numérico sobre tensores. Muchas aplicaciones no escriben kernels a mano, sino que delegan gran parte de la ejecución a bibliotecas optimizadas que internamente aprovechan la GPU.
 
-Entre estas bibliotecas, PyTorch ofrece un ejemplo especialmente claro para introducir esta forma de trabajo. En lugar de escribir kernels explícitos, quien programa opera sobre tensores y decide en qué dispositivo quiere ejecutar el cálculo.
+## Dispositivo, transferencias y costo total
 
-Un ejemplo mínimo sobre CPU puede verse así:
+Un punto central al trabajar con PyTorch consiste en elegir el dispositivo de ejecución. En una introducción conviene concentrarse en los casos más habituales:
 
-```python
-import torch
+- `cpu`, para ejecución sobre procesador generalista;
+- `cuda`, para GPU NVIDIA;
+- `mps`, para GPU de Apple en entornos compatibles.
 
-t1 = torch.tensor([1.0, 2.0, 3.0])
-t2 = torch.tensor([4.0, 5.0, 6.0])
-result = t1 + t2
-```
-
-La idea general se parece a una operación vectorizada con NumPy. La diferencia importante es que PyTorch permite mover esos tensores a GPU cuando el entorno lo soporta. Por ese motivo, resulta especialmente útil en flujos de aprendizaje automático y cálculo numérico donde interesa conservar un mismo modelo de programación sobre CPU o GPU.
-
-Ese mismo patrón puede verse con una multiplicación de matrices:
-
-```python
-import torch
-
-
-m1 = torch.tensor([[1.0, 2.0], [3.0, 4.0]])
-m2 = torch.tensor([[5.0, 6.0], [7.0, 8.0]])
-matrix_result = m1 @ m2
-```
-
-La ventaja pedagógica del ejemplo es que conserva la misma interfaz general: tanto la suma de vectores como la multiplicación de matrices se expresan como operaciones sobre tensores, y luego esas mismas operaciones pueden ejecutarse sobre GPU sin cambiar la idea básica del código.
-
-Un ejemplo mínimo permite ver esa continuidad entre CPU y GPU:
-
-```python
-import torch
-
-values = torch.tensor([1.0, 2.0, 3.0, 4.0], device="cuda")
-result = values * 2 + 1
-```
-
-La operación es la misma tanto si `device` vale `"cpu"` como si vale `"cuda"`. En entornos Mac con GPU de Apple, el valor sería `"mps"`.
-
-Habitualmente se suele escribir el código de manera que la elección del dispositivo quede centralizada en un solo lugar, por ejemplo:
+Habitualmente se centraliza la elección del dispositivo en un solo lugar:
 
 ```python
 import torch
@@ -222,11 +196,33 @@ else:
 	device = "cpu"
 ```
 
-Desde el punto de vista didáctico, esto resulta especialmente útil porque permite trabajar con el mismo código básico incluso en entornos donde no siempre hay GPU disponible.
+Esto permite conservar la misma estructura general del código y cambiar solo el lugar donde viven los tensores. Una operación simple sobre GPU puede escribirse así:
 
-Aunque en la práctica PyTorch contempla otros backends y aceleradores, en este nivel conviene concentrarse en `cpu`, `cuda` y `mps`, porque representan los casos más habituales y permiten introducir la idea de dispositivo sin agregar complejidad innecesaria.
+```python
+import torch
 
-Con esa misma lógica, la multiplicación de matrices también puede escribirse sobre el dispositivo elegido sin cambiar la estructura general de la operación:
+values = torch.tensor([1.0, 2.0, 3.0, 4.0], device=device)
+result = values * 2 + 1
+```
+
+La operación es casi idéntica a la vista en CPU. Lo que cambia es el dispositivo donde se ejecuta. Esta continuidad constituye una de las principales ventajas de las bibliotecas de alto nivel: permiten mantener una interfaz estable mientras el backend decide cómo aprovechar el acelerador.
+
+También puede hacerse explícito el movimiento entre host y dispositivo:
+
+```python
+import torch
+
+values = torch.tensor([1.0, 2.0, 3.0, 4.0])
+
+if device != "cpu":
+	gpu_values = values.to(device)
+	gpu_result = gpu_values * 2 + 1
+	result_back_on_cpu = gpu_result.to("cpu")
+```
+
+Aquí aparecen con claridad tres momentos distintos: datos en CPU, cómputo en GPU y devolución del resultado al host. Esta secuencia es importante porque una implementación acelerada no debe evaluarse solo por el tiempo del cálculo puro. Si la transferencia domina el tiempo total, la mejora esperada puede reducirse mucho o incluso desaparecer.
+
+La misma lógica puede verse en una multiplicación de matrices:
 
 ```python
 import torch
@@ -236,44 +232,63 @@ m2 = torch.tensor([[5.0, 6.0], [7.0, 8.0]], device=device)
 matrix_result = m1 @ m2
 ```
 
-La notación sigue siendo la misma que en CPU: lo que cambia es el dispositivo donde viven los tensores y, por lo tanto, dónde se ejecuta el cálculo. Este punto es importante porque muestra una de las principales ventajas de las bibliotecas de alto nivel: permiten conservar una interfaz muy similar mientras el backend decide cómo aprovechar CPU o GPU.
+La notación sigue siendo la misma que en CPU, pero ahora el cálculo puede delegarse al acelerador. Este tipo de continuidad explica por qué PyTorch GPU ocupa un lugar tan importante en flujos contemporáneos de aprendizaje profundo y procesamiento numérico intensivo.
 
-También puede escribirse de forma más explícita el movimiento entre dispositivos:
+## Numba CUDA y PyTorch GPU
+
+Conviene comparar brevemente ambos enfoques para no confundir sus papeles dentro del libro.
+
+| Herramienta | Nivel de abstracción | Conviene usarla cuando | Lo que deja ver con más claridad |
+|---|---|---|---|
+| Numba CUDA | más cercano al kernel y a CUDA | interesa entender cómo se distribuye trabajo en threads, blocks y grids | organización interna de la ejecución GPU |
+| PyTorch GPU | más cercano a tensores y operaciones de alto nivel | el problema ya se expresa como cálculo sobre tensores y se quiere usar un acelerador sin escribir kernels manuales | continuidad entre tensores y aceleración sobre GPU |
+
+Esta comparación ayuda a ubicar mejor el sentido pedagógico del capítulo. Numba CUDA permite entender cómo funciona la GPU de forma más cercana al hardware. PyTorch GPU muestra cómo muchas aplicaciones reales acceden a ese mismo hardware desde un nivel de abstracción mayor.
+
+## Continuidad del caso práctico transversal: Sobel con PyTorch GPU
+
+Después de haber trabajado Sobel en CPU con Numba y luego sobre arreglos y tensores en CPU, conviene retomar ahora el mismo problema desde la lógica del acelerador. En este punto, el interés principal no está en redefinir el operador desde cero, sino en observar qué cambia cuando la misma formulación sobre tensores se ejecuta en GPU.
+
+![Aplicación conceptual del filtro de Sobel en GPU a partir de una formulación basada en convolución.](assets/sobel-filtros.png)
+
+Una versión con PyTorch GPU puede escribirse así:
 
 ```python
 import torch
 
-device = ...  # lógica para elegir dispositivo
 
-values = torch.tensor([1.0, 2.0, 3.0, 4.0])
-cpu_result = values * 2 + 1
+def sobel_torch_gpu(image, device):
+	image = torch.as_tensor(image, dtype=torch.float32, device=device)
+	result = torch.zeros_like(image)
 
-if torch.cuda.is_available():
-	gpu_values = values.to(device)
-	gpu_result = gpu_values * 2 + 1
-	result_back_on_cpu = gpu_result.to("cpu")
+	top_left = image[:-2, :-2]
+	top = image[:-2, 1:-1]
+	top_right = image[:-2, 2:]
+	left = image[1:-1, :-2]
+	right = image[1:-1, 2:]
+	bottom_left = image[2:, :-2]
+	bottom = image[2:, 1:-1]
+	bottom_right = image[2:, 2:]
+
+	gx = (
+		-top_left + top_right
+		- 2.0 * left + 2.0 * right
+		- bottom_left + bottom_right
+	)
+	gy = (
+		-top_left - 2.0 * top - top_right
+		+ bottom_left + 2.0 * bottom + bottom_right
+	)
+
+	result[1:-1, 1:-1] = torch.abs(gx) + torch.abs(gy)
+	return result
 ```
 
-La devolución del resultado a CPU no siempre es obligatoria, pero aquí se muestra de manera explícita porque permite ver una situación muy habitual: el cálculo puede realizarse en GPU y, sin embargo, el resultado final puede necesitarse nuevamente en la memoria principal para imprimirse, almacenarse, combinarse con otras estructuras o seguir procesándose fuera del acelerador.
+La estructura del cálculo resulta familiar porque sigue la misma reformulación sobre tensores ya presentada en el capítulo anterior. Lo nuevo es que ahora esos tensores viven en el dispositivo acelerador. Esto permite ver con claridad el sentido de la progresión del libro: primero se estudió el problema de forma secuencial y compilada sobre CPU, luego se lo reformuló sobre arreglos y tensores, y ahora esa misma formulación se ejecuta sobre GPU.
 
-Aquí aparecen con claridad tres momentos: datos en CPU, cómputo en GPU y devolución del resultado al host. Esa secuencia retoma una idea ya señalada en la sección de debugging y profiling: medir una ejecución GPU exige distinguir cálculo y transferencia.
+También conviene señalar un límite importante. El hecho de que una versión GPU exista no implica automáticamente que siempre sea preferible. Si la imagen es pequeña o si el costo de mover datos domina el tiempo total, la mejora puede no justificar el cambio de dispositivo. En cambio, cuando el volumen de datos crece o el cálculo se encadena con otras operaciones que ya permanecen en GPU, la aceleración puede resultar mucho más significativa.
 
-## Numba y las bibliotecas de alto nivel: dos puertas de entrada distintas
-
-Conviene comparar brevemente ambos enfoques para no confundir sus papeles dentro del libro.
-
-| Herramienta o familia | Nivel de abstracción | Conviene usarla cuando | Lo que deja ver con más claridad |
-|---|---|---|---|
-| Numba | más cercano al kernel y a CUDA | interesa entender cómo se distribuye trabajo en threads, blocks y grids | organización interna de la ejecución GPU |
-| PyTorch, TensorFlow, JAX | más cercano a tensores y operaciones de alto nivel | el problema ya se expresa como cálculo sobre tensores y se quiere trabajar en CPU o GPU con una interfaz uniforme | continuidad entre vectorización, tensores y aceleración |
-
-Esta comparación ayuda a ubicar mejor el sentido pedagógico del capítulo. Numba permite entender cómo funciona la GPU más de cerca. Las bibliotecas de alto nivel muestran cómo muchas aplicaciones reales acceden a ese hardware sin escribir kernels manuales en cada caso.
-
-## Importancia para deep learning
-
-Uno de los motivos por los que las GPU ganaron tanta relevancia es su papel en el entrenamiento y la inferencia de modelos de aprendizaje profundo. Redes neuronales con millones de parámetros requieren una enorme cantidad de operaciones numéricas, y las GPU permiten ejecutarlas de manera mucho más eficiente que una CPU generalista.
-
-La razón de esta ventaja no es solo la cantidad de núcleos. También influye que muchas operaciones de deep learning, como productos matriciales, convoluciones y transformaciones sobre tensores, tienen una estructura muy regular y altamente paralelizable. En ese sentido, las GPU representan una continuidad natural de las ideas de vectorización y paralelismo de datos desarrolladas en el capítulo de vectorización y broadcasting.
+Este mismo criterio permite proyectar el ejemplo hacia una continuidad natural: si en lugar de una sola imagen se trabaja con secuencias de cuadros, el problema se acerca al procesamiento de video. Esa proyección no necesita desarrollarse aquí por completo, pero sí ayuda a ver cómo el caso práctico transversal puede escalar hacia escenarios de mayor volumen de datos.
 
 ## Qué conviene observar al analizar una implementación GPU
 
@@ -283,7 +298,8 @@ Al estudiar o medir un kernel, conviene observar al menos estas cuestiones:
 - si los accesos a memoria global son regulares o dispersos;
 - si los hilos de un mismo warp siguen trayectorias de ejecución similares;
 - si la configuración de bloques e hilos parece razonable para el tamaño del problema;
-- si el costo de copiar datos entre CPU y GPU no anula la mejora obtenida en el cómputo.
+- si el costo de copiar datos entre CPU y GPU no anula la mejora obtenida en el cómputo;
+- si el cálculo permanece en GPU lo suficiente como para amortizar las transferencias.
 
 Estas preguntas ayudan a interpretar resultados experimentales y a evitar una expectativa ingenua según la cual cualquier cálculo será automáticamente más rápido por ejecutarse en GPU.
 
@@ -325,15 +341,14 @@ En un nivel introductorio, profiling y debugging en GPU no requieren todavía he
 
 ## Cierre de la unidad
 
-Este capítulo permitió introducir la GPU como una plataforma de paralelismo masivo orientada a throughput, con una organización de hilos y una jerarquía de memoria propias. También mostró que el rendimiento no depende solo de escribir un kernel correcto, sino de comprender cómo interactúan bloques, warps, memoria global, memoria compartida y configuración de ejecución.
+Este capítulo permitió introducir la GPU como una plataforma de paralelismo masivo orientada a throughput, con una organización de hilos y una jerarquía de memoria propias. También mostró que el rendimiento no depende solo de ejecutar el mismo cálculo en otro hardware, sino de comprender cómo interactúan configuración, memoria, transferencia y volumen de trabajo.
 
-Con este marco, el capítulo final del libro reunirá algunas líneas de proyección para seguir profundizando el estudio del paralelismo, incluyendo temas avanzados de rendimiento, profiling, GPU y memoria.
+Con este marco, el recorrido del libro queda ya completo en su progresión principal: paralelismo explícito en CPU, reformulación eficiente del cálculo sobre arreglos y tensores, y aceleración sobre GPU. El capítulo final reunirá esa secuencia en una síntesis general para ayudar a decidir cuándo conviene usar cada familia de herramientas.
 
 ## Ejercicios del capítulo
 
 - Explique por qué una GPU resulta adecuada para tareas altamente paralelizables.
 - Describa la función de los conceptos grid, block y thread en CUDA.
-- Indique qué relación existe entre GPU y deep learning.
 - Distinga memoria global y memoria compartida en una GPU.
 - Explique con sus palabras qué significan coalescing, occupancy y warp divergence.
 - Justifique por qué conviene separar tiempo de transferencia y tiempo de kernel al medir rendimiento.
@@ -342,3 +357,5 @@ Con este marco, el capítulo final del libro reunirá algunas líneas de proyecc
 - Explique qué error puede cometerse al medir un kernel si no se sincroniza la GPU antes de registrar el tiempo final.
 - Explique por qué dos kernels correctos pueden rendir de forma muy distinta en una misma GPU.
 - Describa qué observaría primero para diagnosticar una implementación GPU correcta que no muestra mejora de rendimiento.
+- Explique qué cambia entre la versión de Sobel sobre tensores en CPU y su ejecución sobre GPU con PyTorch.
+- Justifique en qué tipo de situación Sobel sobre GPU tendría más sentido que Sobel sobre CPU.

@@ -42,6 +42,7 @@ format:
     sansfont: "Lato"
     tbl-colwidths: auto
     highlight-style: github
+    include-after-body: version.tex
     # Bloque LaTeX inyectado en el preambulo del PDF
     include-in-header:
       text: |
