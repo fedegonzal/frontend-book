@@ -2,7 +2,7 @@
 
 Una vez introducidos los conceptos básicos del paralelismo, conviene estudiar dos dimensiones que condicionan cualquier implementación real. Por un lado, la arquitectura disponible define cómo se organizan procesadores, memorias y mecanismos de comunicación. Por otro, las métricas permiten evaluar si una versión paralela realmente mejora el desempeño o si solo agrega complejidad y costo.
 
-Estas dos dimensiones no deben analizarse por separado. Una misma estrategia de programación puede comportarse de manera muy distinta según el tipo de memoria, la jerarquía de caché, el costo de sincronización o el ancho de banda disponible. Por ese motivo, este capítulo no se limita a definir speed-up y eficiencia, sino que busca explicar por qué muchas implementaciones no escalan como se espera.
+Estas dos dimensiones no deben analizarse por separado. Una misma estrategia de programación puede comportarse de manera muy distinta según el tipo de memoria, la jerarquía de caché, el costo de sincronización o el ancho de banda disponible.
 
 ## Objetivos del capítulo
 
@@ -16,10 +16,10 @@ Estas dos dimensiones no deben analizarse por separado. Una misma estrategia de 
 
 Una clasificación clásica de las arquitecturas paralelas es la taxonomía de Flynn. Este esquema organiza las plataformas según la relación entre flujo de instrucciones y flujo de datos. Aunque se trata de una clasificación histórica, sigue siendo útil para introducir diferencias fundamentales entre tipos de procesamiento.
 
-- SISD: una única secuencia de instrucciones opera sobre un único flujo de datos. Corresponde al modelo secuencial tradicional.
-- SIMD: una misma instrucción se aplica en paralelo sobre múltiples datos. Este esquema resulta especialmente relevante para vectorización, procesamiento de imágenes y muchas operaciones internas de las GPU.
-- MISD: múltiples instrucciones actúan sobre un mismo flujo de datos. Se mantiene sobre todo como categoría teórica y tiene escasa presencia en sistemas de propósito general.
-- MIMD: múltiples instrucciones operan sobre múltiples datos. Es la categoría más común en computación paralela de propósito general y abarca desde procesadores multicore hasta numerosos sistemas distribuidos.
+- SISD: una única secuencia de instrucciones opera sobre un único flujo de datos. Corresponde al modelo secuencial tradicional. Un ejemplo representativo sería una computadora mononúcleo clásica ejecutando un programa secuencial, o incluso un microcontrolador simple que resuelve una tarea en una única línea de ejecución.
+- SIMD: una misma instrucción se aplica en paralelo sobre múltiples datos. Este esquema resulta especialmente relevante para vectorización, procesamiento de imágenes y muchas operaciones internas de las GPU. Como ejemplo, pueden pensarse las extensiones vectoriales de procesadores modernos, como SSE o AVX en CPU, o una GPU cuando aplica la misma operación sobre miles de píxeles o elementos de un tensor.
+- MISD: múltiples instrucciones actúan sobre un mismo flujo de datos. Se mantiene sobre todo como categoría teórica y tiene escasa presencia en sistemas de propósito general. Cuando se lo ilustra con ejemplos, suele recurrirse a ciertos sistemas de control tolerantes a fallos, donde varias unidades procesan la misma entrada con lógicas distintas para aumentar confiabilidad, aunque no se trate de un modelo habitual en computadoras de uso general.
+- MIMD: múltiples instrucciones operan sobre múltiples datos. Es la categoría más común en computación paralela de propósito general y abarca desde procesadores multicore hasta numerosos sistemas distribuidos. Una notebook o una PC actual con varios núcleos ya responde a este esquema, y también lo hacen un servidor multiprocesador o un clúster donde distintos nodos ejecutan tareas diferentes sobre datos distintos.
 
 En términos generales, SIMD resulta adecuado cuando hay gran regularidad en los datos y la operación aplicada es la misma. MIMD, en cambio, ofrece mayor flexibilidad y permite abordar problemas con tareas heterogéneas, dependencias más complejas o estrategias de sincronización variadas.
 
@@ -33,21 +33,31 @@ En sistemas de memoria distribuida, cada nodo posee memoria propia. Los datos no
 
 También existen modelos híbridos, en los que cada nodo tiene memoria compartida local pero se comunica con otros nodos como si formara parte de un sistema distribuido. Este esquema es habitual en servidores modernos y en numerosos clústeres de alto rendimiento.
 
-Esta distinción ayuda a anticipar decisiones de diseño. Herramientas como OpenMP se ajustan de manera natural a memoria compartida, mientras que MPI responde mejor a memoria distribuida. En modelos híbridos, ambas estrategias suelen combinarse.
+Esta distinción ayuda a anticipar decisiones de diseño. Como se verá más adelante, la elección de una estrategia de paralelización suele estar condicionada por la arquitectura. Herramientas como OpenMP se ajustan de manera natural a memoria compartida, mientras que MPI responde mejor a memoria distribuida. En modelos híbridos, ambas estrategias suelen combinarse.
 
 ## Jerarquía de memoria y localidad
 
 En arquitectura paralela no alcanza con conocer la cantidad de cores. También importa cómo acceden a los datos. La memoria principal es mucho más lenta que los registros y las memorias caché, por lo que el rendimiento depende en gran medida de la capacidad de reutilizar datos cercanos en tiempo o en espacio.
 
-La localidad temporal aparece cuando un dato utilizado recientemente vuelve a usarse en poco tiempo. La localidad espacial aparece cuando, al acceder a una posición de memoria, es probable que pronto se necesiten posiciones cercanas. Cuando un programa aprovecha estas regularidades, aumenta la probabilidad de obtener un cache hit y disminuye el costo de acceso a memoria principal.
+La localidad temporal aparece cuando un dato utilizado recientemente vuelve a usarse en poco tiempo. Si una variable, una fila de una matriz o un bloque de datos acaba de cargarse en caché y el programa la necesita nuevamente enseguida, es más probable que ese acceso pueda resolverse sin volver a buscar la información en memoria principal. Dicho de forma simple, la localidad temporal mejora cuando un programa reutiliza pronto aquello que ya usó.
 
-En programación paralela esta cuestión es especialmente importante porque dos implementaciones con el mismo número de hilos pueden rendir de forma muy distinta según cómo recorran los datos. A veces, reorganizar un arreglo o cambiar el orden de recorrido mejora más que agregar workers.
+La localidad espacial aparece cuando, al acceder a una posición de memoria, es probable que pronto se necesiten posiciones cercanas. Esto ocurre, por ejemplo, al recorrer un vector de manera secuencial: después de leer un elemento, suelen leerse los siguientes, que están almacenados en direcciones contiguas. Como la caché transfiere datos en bloques o líneas, aprovechar posiciones vecinas aumenta la probabilidad de obtener un acierto de caché y reduce el costo de acceso.
+
+En programación paralela esta cuestión es especialmente importante porque dos implementaciones con el mismo número de hilos pueden rendir de forma muy distinta según cómo recorran los datos. A veces, reorganizar un arreglo o cambiar el orden de recorrido mejora más que agregar workers, justamente porque mejora la localidad y reduce fallos de caché. Más adelante, cuando se estudie la multiplicación de matrices, aparecerá un ejemplo representativo: trabajar con una versión transpuesta de una de las matrices puede volver más regular el acceso a memoria y mejorar el aprovechamiento de caché, aun cuando el algoritmo siga realizando la misma cantidad de operaciones aritméticas.
 
 ## False sharing y NUMA
 
 Un problema frecuente en memoria compartida es el false sharing. Ocurre cuando dos hilos modifican variables distintas que, sin embargo, residen en la misma línea de caché. Aunque cada hilo trabaje sobre un dato diferente, el hardware interpreta que ambos compiten por la misma región de memoria y fuerza invalidaciones o recargas innecesarias. El resultado es una degradación de rendimiento que puede ser importante aun cuando el algoritmo parezca correctamente paralelizado.
 
+Un ejemplo simple ayuda a verlo. Supóngase un arreglo de contadores donde cada hilo actualiza una posición distinta, por ejemplo `counters[0]`, `counters[1]`, `counters[2]` y `counters[3]`. A primera vista no habría conflicto, porque cada hilo escribe en una variable diferente. Sin embargo, si esas posiciones quedan alojadas en una misma línea de caché, cada escritura puede invalidar la copia observada por otros núcleos. El programa sigue siendo correcto desde el punto de vista lógico, pero el rendimiento cae porque el hardware debe sincronizar constantemente esa región de memoria.
+
+Identificar esta situación no siempre es sencillo, porque el error no suele aparecer como un fallo visible del programa. Más bien se manifiesta como una pérdida de rendimiento difícil de explicar: al aumentar la cantidad de hilos, el tiempo no mejora como se esperaba o incluso empeora, aun cuando el reparto de trabajo parezca razonable. Una señal típica es que el problema disminuya si se separan físicamente los datos, por ejemplo dejando espacio adicional entre contadores o asignando a cada hilo bloques más grandes y menos entremezclados de memoria.
+
 Otro concepto clave es NUMA, sigla de Non-Uniform Memory Access. En este tipo de arquitectura, todos los núcleos pueden acceder a toda la memoria, pero no con la misma latencia. Cada procesador o grupo de núcleos tiene memoria local de acceso más rápido y memoria remota de acceso más costoso. Por ese motivo, en plataformas NUMA la ubicación de los datos influye directamente sobre el rendimiento.
+
+También aquí conviene pensar en un ejemplo. Si un proceso o un conjunto de hilos corre principalmente en un socket del sistema, pero los datos que utiliza fueron reservados en memoria asociada a otro socket, buena parte de los accesos serán remotos. El programa puede seguir funcionando sin errores, pero con tiempos sensiblemente peores que los esperados, porque una parte importante del costo se desplaza hacia la comunicación con memoria no local.
+
+En la práctica, una situación NUMA suele sospecharse cuando el rendimiento cambia de manera notable según dónde se ejecuten los hilos o cómo se distribuyan los datos, aun manteniendo el mismo algoritmo. Si una implementación mejora al fijar afinidad de hilos, al inicializar datos desde el mismo conjunto de núcleos que luego los usa o al reducir accesos remotos, es razonable pensar que la arquitectura NUMA está influyendo sobre el resultado. En este tipo de plataformas, no alcanza con repartir tareas: también conviene preguntarse cerca de qué procesador quedaron ubicados los datos.
 
 False sharing y NUMA muestran una idea central: el paralelismo real no depende solo de repartir trabajo, sino también de cómo ese trabajo interactúa con la memoria física.
 
@@ -71,15 +81,19 @@ $$
 E(p) = \frac{S(p)}{p}
 $$
 
-Si se desea expresar el valor en porcentaje, basta con multiplicar por 100. En condiciones normales, una eficiencia del 100% representa un escalamiento lineal ideal. Valores menores indican que una parte del potencial paralelo se pierde en sobrecargas o en secciones no paralelizables.
-
-Conviene corregir aquí una idea frecuente: si $T_s = 100$ segundos, $T_p = 20$ segundos y se usan 4 procesadores, entonces el speed-up es 5, pero la eficiencia estándar no es 125%. En realidad es:
+En este libro se expresará siempre en porcentaje. Por lo tanto, conviene escribir:
 
 $$
-E(4) = \frac{5}{4} = 1.25
+E(p) = \frac{S(p)}{p} \times 100
 $$
 
-Ese resultado solo podría interpretarse como 125% si se tomara la fórmula de manera directa, pero en análisis de escalamiento convencional una eficiencia mayor al 100% se considera superlineal y requiere una explicación específica, por ejemplo mejores efectos de caché. En un tratamiento introductorio, lo correcto es esperar una eficiencia ideal de hasta 100% y usar este concepto para detectar cuánto se aleja una implementación de ese ideal.
+En condiciones normales, una eficiencia del 100% representa un escalamiento lineal ideal. Valores menores indican que una parte del potencial paralelo se pierde en sobrecargas o en secciones no paralelizables.
+
+$$
+E(4) = \frac{5}{4} \times 100 = 125\%
+$$
+
+Este resultado indica un caso de eficiencia superlineal, algo que puede ocurrir ocasionalmente cuando la versión paralela aprovecha mejor la jerarquía de memoria, reduce fallos de caché o reorganiza los datos de una manera más favorable que la versión secuencial. Este tipo de situaciones puede aparecer cuando, además del paralelismo, la versión mejorada aprovecha mejor la jerarquía de memoria, reduce fallos de caché, utiliza vectorización o reorganiza el acceso a los datos de una manera más favorable que la versión secuencial. Para resumir, una eficiencia superior al 100% no es un error, sino una señal de que la versión paralela (o con la combinación de mejoras aplicadas) ha logrado un rendimiento mejor que el esperado por el simple hecho de usar más procesadores.
 
 ## Un ejemplo numérico de escalamiento
 
@@ -87,11 +101,11 @@ La siguiente tabla muestra un caso hipotético de escalamiento fuerte para un pr
 
 | Procesadores $p$ | Tiempo paralelo $T_p$ | Speed-up $S(p)$ | Eficiencia $E(p)$ |
 |---|---:|---:|---:|
-| 1 | 100 s | 1.00 | 1.00 |
-| 2 | 55 s | 1.82 | 0.91 |
-| 4 | 32 s | 3.13 | 0.78 |
-| 8 | 22 s | 4.55 | 0.57 |
-| 16 | 18 s | 5.56 | 0.35 |
+| 1 | 100 s | 1.00 | 100% |
+| 2 | 55 s | 1.82 | 91% |
+| 4 | 32 s | 3.13 | 78% |
+| 8 | 22 s | 4.55 | 57% |
+| 16 | 18 s | 5.56 | 35% |
 
 La tabla permite observar dos fenómenos. En primer lugar, el tiempo sigue disminuyendo al agregar procesadores. En segundo lugar, la eficiencia cae de manera sostenida. Esto muestra que la implementación mejora, pero lo hace con rendimientos decrecientes. Justamente esa diferencia entre acelerar y escalar bien es uno de los ejes centrales del análisis de performance.
 
@@ -166,13 +180,12 @@ El modelo Roofline ofrece una forma sintética de relacionar capacidad de cómpu
 
 En términos introductorios, el modelo permite distinguir si una implementación está frenada por cómputo o por memoria. Si la intensidad aritmética del programa es baja, es probable que el ancho de banda sea el factor dominante. Si es alta, el límite puede pasar a ser la capacidad de cálculo. Este marco será útil más adelante para interpretar resultados experimentales de CPU, vectorización y GPU.
 
-## Arquitectura, sincronización y escalabilidad real
+
+## Cierre de la unidad
 
 Con todos estos elementos, resulta más claro por qué una implementación paralela puede comportarse por debajo de lo esperado. El problema puede estar en una fracción secuencial importante, en exceso de sincronización, en mala localidad de caché, en false sharing, en accesos remotos sobre arquitectura NUMA o en saturación del ancho de banda de memoria.
 
 Por ese motivo, medir no consiste solo en registrar tiempos. También implica interpretar qué parte de la arquitectura está imponiendo el límite. Ese vínculo entre estructura del hardware y rendimiento observado es el núcleo del análisis de performance en sistemas paralelos.
-
-## Cierre de la unidad
 
 Este capítulo presentó una base más rigurosa para evaluar plataformas paralelas. A partir de ahora ya no alcanza con afirmar que un programa usa varios hilos o varios procesos: también conviene preguntar sobre qué arquitectura corre, qué costos de memoria introduce y hasta dónde puede escalar razonablemente.
 
@@ -180,23 +193,13 @@ En el próximo capítulo se estudiarán modelos de programación paralela. Esa t
 
 ## Ejercicios del capítulo
 
-### Comprensión
+- Describa las categorías principales de la taxonomía de Flynn y señale en qué casos resultan más relevantes SIMD y MIMD.
+- Explique la diferencia entre memoria compartida, memoria distribuida y modelo híbrido.
+- Defina localidad temporal y localidad espacial.
+- Explique con sus palabras qué problema intenta describir la ley de Amdahl.
+- Distinga problemas memory bound y compute bound.
 
-1. Describa las categorías principales de la taxonomía de Flynn y señale en qué casos resultan más relevantes SIMD y MIMD.
-2. Explique la diferencia entre memoria compartida, memoria distribuida y modelo híbrido.
-3. Defina localidad temporal y localidad espacial.
-4. Explique con sus palabras qué problema intenta describir la ley de Amdahl.
-5. Distinga problemas memory bound y compute bound.
-
-### Aplicación
-
-1. Calcule el speed-up de un programa que tarda 24 segundos en forma secuencial y 6 segundos en forma paralela.
-2. Calcule la eficiencia del caso anterior si se usaron 4 procesadores.
-3. Suponga que la fracción secuencial de un programa es 0.2. Calcule el speed-up máximo teórico según Amdahl para 8 procesadores.
-4. Interprete la siguiente situación: al pasar de 8 a 16 procesadores, el tiempo baja poco y la eficiencia cae con fuerza.
-
-### Integración
-
-1. Redacte un análisis breve en el que relacione speed-up, eficiencia y costos de sincronización.
-2. Proponga un ejemplo conceptual de false sharing y explique por qué puede degradar el rendimiento aunque cada hilo escriba en una variable distinta.
-3. Justifique por qué una tarea puede dejar de escalar aunque todavía haya cores disponibles.
+- Calcule el speed-up de un programa que tarda 24 segundos en forma secuencial y 6 segundos en forma paralela.
+- Calcule la eficiencia del caso anterior si se usaron 4 procesadores.
+- Suponga que la fracción secuencial de un programa es 0.2. Calcule el speed-up máximo teórico según Amdahl para 8 procesadores.
+- Interprete la siguiente situación: al pasar de 8 a 16 procesadores, el tiempo baja poco y la eficiencia cae con fuerza.

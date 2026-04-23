@@ -19,11 +19,9 @@ Este cambio de formulación tiene consecuencias importantes. Reduce la sobrecarg
 
 La vectorización consiste en aplicar operaciones sobre estructuras completas de datos, como vectores o matrices, en lugar de recorrer elemento por elemento mediante bucles explícitos en Python. Esta estrategia suele apoyarse en implementaciones optimizadas de bajo nivel y en capacidades del hardware asociadas a SIMD, es decir, la ejecución de una misma instrucción sobre múltiples datos.
 
-El material de cátedra presenta ejemplos sencillos de suma de vectores para mostrar la diferencia entre una implementación secuencial con bucles y una versión vectorial basada en NumPy.
-
 En términos prácticos, vectorizar significa reemplazar una lógica del tipo "para cada elemento, hacer una operación" por una expresión que opera sobre todo el arreglo de una vez. La operación conceptual puede ser la misma, pero el costo de ejecución cambia porque ya no se depende del intérprete de Python para administrar cada iteración individual.
 
-Una comparación mínima permite verlo con claridad:
+Una comparación mínima permite verlo con claridad, supongamos que se quiere sumar dos vectores `a` y `b`. Una formulación explícita con un bucle en Python podría ser:
 
 ```python
 result = []
@@ -39,7 +37,31 @@ import numpy as np
 result = np.array(a) + np.array(b)
 ```
 
-La segunda versión no es solo más breve. También suele ser más eficiente porque delega el cálculo a una implementación optimizada.
+La segunda versión no es solo más breve. También es más eficiente porque delega el cálculo a una implementación optimizada.
+
+Una comparación análoga puede hacerse con multiplicación de matrices. Como se vio en el capítulo anterior, en una formulación explícita, el cálculo exige recorrer filas, columnas y productos parciales:
+
+```python
+result = []
+for i in range(len(a)):
+	row = []
+	for j in range(len(b[0])):
+		total = 0
+		for k in range(len(b)):
+			total += a[i][k] * b[k][j]
+		row.append(total)
+	result.append(row)
+```
+
+Frente a una formulación vectorizada:
+
+```python
+import numpy as np
+
+result = np.array(a) @ np.array(b)
+```
+
+Aquí también se observa el cambio de nivel de abstracción: en lugar de describir cada multiplicación y cada suma parcial, se expresa directamente la operación matricial completa y se delega su ejecución a una biblioteca optimizada.
 
 ## SIMD como fundamento
 
@@ -47,13 +69,11 @@ SIMD, sigla de Single Instruction, Multiple Data, permite que una misma operaci�
 
 Conviene notar que SIMD no es lo mismo que vectorización, aunque ambas ideas están muy relacionadas. SIMD es una capacidad de hardware o de bajo nivel. La vectorización es una forma de expresar el cálculo de modo tal que ese hardware pueda aprovecharse. Dicho de otro modo, la vectorización suele ser la puerta de entrada de alto nivel a comportamientos cercanos a SIMD.
 
-Por ese motivo, este capítulo funciona como puente entre dos escalas: la del código Python que escribe quien programa y la del hardware que ejecuta muchas operaciones sobre datos contiguos.
+Por ese motivo, este capítulo funciona como puente entre dos escalas: la del código Python y la del hardware que ejecuta muchas operaciones sobre datos contiguos.
 
 ## Qué es el broadcasting
 
 El broadcasting es un conjunto de reglas que permite combinar arreglos de distinto tamaño cuando sus dimensiones son compatibles según ciertos criterios. En lugar de expandir manualmente los datos o escribir bucles adicionales, la biblioteca aplica la operación como si ciertos valores se difundieran sobre la estructura mayor.
-
-El programa muestra ejemplos de suma entre vectores y escalares, y también de operaciones mixtas entre más de una estructura de datos.
 
 Un caso elemental es sumar un escalar a todos los elementos de un vector:
 
@@ -72,33 +92,38 @@ También puede aparecer en operaciones entre matrices y vectores, por ejemplo cu
 
 Vectorización y broadcasting suelen aparecer juntas. La primera se refiere a operar sobre arreglos completos; la segunda, a compatibilizar dimensiones para que esa operación sea posible sin trabajo manual adicional. Aunque se las confunda con frecuencia, conviene distinguirlas porque resuelven problemas diferentes.
 
-La vectorización responde a la pregunta "cómo evitar iterar elemento por elemento desde Python". El broadcasting responde a la pregunta "cómo combinar estructuras de distinta forma sin escribir lógica adicional para expandirlas". En muchos programas ambas ideas aparecen al mismo tiempo, pero no cumplen exactamente la misma función.
+La vectorización responde a la pregunta "cómo evitar iterar elemento por elemento". El broadcasting responde a la pregunta "cómo combinar estructuras de distinta forma sin escribir lógica adicional para expandirlas".
 
-## Comparación con bucles explícitos
+## El lugar de NumPy
 
-Desde el punto de vista didáctico, conviene comparar tres opciones frente a un mismo problema numérico sencillo:
+Antes de paralelizar bucles en Python, conviene considerar una alternativa muchas veces más efectiva: eliminar el bucle explícito. NumPy permite expresar operaciones sobre arreglos completos mediante vectorización. En problemas numéricos regulares, esta estrategia suele superar a muchas soluciones basadas en threads o procesos, justamente porque reduce la sobrecarga del intérprete y aprovecha implementaciones de bajo nivel optimizadas.
 
-- un bucle explícito en Python;
-- una estrategia de paralelización explícita con hilos o procesos;
-- una formulación vectorizada con NumPy.
+Por ejemplo, si el objetivo es sumar dos vectores, una formulación vectorizada como la siguiente suele ser preferible a un loop Python paralelizado manualmente:
 
-El punto importante es que la tercera opción muchas veces gana sin necesidad de lanzar workers visibles. Esto ocurre porque el costo de iterar en Python suele ser alto, mientras que una operación vectorizada delega el trabajo a rutinas optimizadas que recorren memoria de forma más eficiente.
+```python
+import numpy as np
 
-Por ese motivo, en problemas de arreglos regulares conviene evaluar primero la vectorización antes de introducir coordinación entre procesos o hilos. Esa recomendación no elimina el valor del paralelismo explícito, pero sí ayuda a elegir el primer enfoque razonable.
+
+a = np.array([1, 2, 3])
+b = np.array([4, 5, 6])
+c = a + b
+```
+
+Esta observación es central para la materia: no todo problema repetitivo debe resolverse con hilos o procesos. En muchos casos, la optimización correcta consiste en cambiar el nivel de abstracción del cálculo.
 
 ## Relación con el ancho de banda de memoria
 
 La mejora de rendimiento asociada con vectorización no depende solo de hacer varias operaciones a la vez. También influye el modo en que los datos se organizan y se recorren en memoria. Cuando un arreglo está dispuesto de forma contigua y la operación recorre los datos con regularidad, el hardware puede aprovechar mejor la jerarquía de caché y reducir accesos costosos a memoria principal.
 
-Aquí vuelve a aparecer una idea del capítulo 07, Arquitectura y métricas: muchas tareas con arreglos grandes están limitadas por memoria más que por cálculo puro. En esos casos, escribir el problema de forma vectorizada puede mejorar tanto la expresión del cálculo como el patrón de acceso a memoria.
+Aquí vuelve a aparecer una idea del capítulo sobre arquitectura y métricas: muchas tareas con arreglos grandes están limitadas por memoria más que por cálculo puro. En esos casos, escribir el problema de forma vectorizada puede mejorar tanto la expresión del cálculo como el patrón de acceso a memoria.
 
-Esto explica por qué una implementación vectorizada puede superar a otra más "paralela" en apariencia. Si la segunda introduce overhead de coordinación o recorre peor los datos, la ventaja de tener más workers puede evaporarse rápidamente.
+Esto explica por qué una implementación vectorizada puede superar a otra más "paralela" en apariencia. Si la segunda introduce overhead de coordinación entre hilos o procesos, o recorre peor los datos, la ventaja de repartir trabajo entre varios workers puede evaporarse rápidamente.
 
 ## Importancia práctica
 
-Estas técnicas son centrales en dispositivos y plataformas actuales. El material menciona explícitamente procesadores Intel, AMD y ARM, además de su relevancia en computación móvil. En el contexto de la materia, su estudio funciona como puente entre paralelismo de CPU, procesamiento numérico eficiente y preparación para el trabajo con GPU.
+Estas técnicas ocupan hoy un lugar central en dispositivos de uso cotidiano, especialmente en teléfonos y en procesadores recientes orientados a cargas intensivas de datos. En equipos móviles actuales, buena parte del procesamiento de imágenes, video, audio, sensores e inferencia de modelos livianos se apoya en operaciones repetitivas sobre arreglos. Por ese motivo, arquitecturas ampliamente presentes en teléfonos y tablets basadas en ARM, incorporan extensiones vectoriales pensadas precisamente para este tipo de trabajo. Dicho de forma simple, la vectorización no es solo un recurso de laboratorio o de servidores: también forma parte del rendimiento que se espera en cámaras computacionales, filtros en tiempo real, reconocimiento de voz y muchas tareas ejecutadas directamente en el dispositivo.
 
-También son especialmente importantes en inteligencia artificial y procesamiento de imágenes, donde gran parte del trabajo consiste en aplicar transformaciones repetitivas sobre tensores, matrices o arreglos multidimensionales. En ese tipo de problemas, vectorización y broadcasting no son una optimización menor, sino una forma natural de expresar el cálculo.
+La misma tendencia aparece en procesadores más recientes para notebooks, escritorios y estaciones de trabajo. Familias actuales de Intel, AMD y también diseños como Apple Silicon combinan varios núcleos con capacidades vectoriales cada vez más importantes, porque gran parte del software contemporáneo depende de operaciones numéricas regulares sobre grandes volúmenes de datos. En inteligencia artificial, procesamiento de imágenes, compresión multimedia y análisis de señales, vectorización y broadcasting no son una optimización secundaria, sino una forma natural de expresar cálculos que luego pueden aprovechar mejor la CPU y, más adelante en el recorrido del libro, también la GPU.
 
 ## Criterios para el análisis práctico
 
@@ -111,7 +136,57 @@ En particular, conviene revisar al menos estas preguntas:
 - ¿la ganancia observada proviene de menos iteraciones en Python, de mejor acceso a memoria o de ambas cosas?;
 - ¿una versión paralela explícita aporta algo adicional o introduce más overhead que beneficio?
 
-Un ejemplo algo más cercano a usos reales aparece al normalizar columnas de una matriz. Si se quiere restar a cada columna su media, puede escribirse:
+Un ejemplo algo más cercano a usos reales aparece al normalizar columnas de una matriz. Si se quiere restar a cada columna su media, una primera formulación secuencial con bucles explícitos podría escribirse así:
+
+```python
+matrix = [
+	[1.0, 10.0, 100.0],
+	[2.0, 20.0, 200.0],
+	[3.0, 30.0, 300.0],
+]
+
+column_means = [
+	sum(row[column] for row in matrix) / len(matrix)
+	for column in range(len(matrix[0]))
+]
+
+centered = []
+for row in matrix:
+	centered_row = []
+	for column in range(len(row)):
+		centered_row.append(row[column] - column_means[column])
+	centered.append(centered_row)
+```
+
+Si se intentara forzar una versión con procesos, el problema debería particionarse y luego recomponerse. Conceptualmente, una formulación posible sería la siguiente:
+
+```python
+from multiprocessing import Pool
+
+
+def subtract_means(row, column_means):
+	return [value - column_means[index] for index, value in enumerate(row)]
+
+
+if __name__ == "__main__":
+	matrix = [
+		[1.0, 10.0, 100.0],
+		[2.0, 20.0, 200.0],
+		[3.0, 30.0, 300.0],
+	]
+	column_means = [
+		sum(row[column] for row in matrix) / len(matrix)
+		for column in range(len(matrix[0]))
+	]
+
+	with Pool(processes=2) as pool:
+		centered = pool.starmap(
+			subtract_means,
+			[(row, column_means) for row in matrix],
+		)
+```
+
+En cambio, una formulación vectorizada con broadcasting puede escribirse así:
 
 ```python
 import numpy as np
@@ -122,11 +197,12 @@ matrix = np.array([
 	[3.0, 30.0, 300.0],
 ])
 
+# axis=0 indica que la media se calcula columna por columna
 column_means = matrix.mean(axis=0)
 centered = matrix - column_means
 ```
 
-Aquí no hace falta expandir manualmente `column_means` para cada fila. El broadcasting aplica la resta como si ese vector se replicara sobre toda la matriz. Este tipo de operación aparece con frecuencia en análisis de datos y aprendizaje automático.
+Aquí no hace falta expandir manualmente `column_means` para cada fila. El broadcasting aplica la resta como si ese vector se replicara sobre toda la matriz. Comparado con la versión secuencial, cambia el nivel de abstracción. Comparado con la versión con procesos, también desaparecen la partición explícita del trabajo y parte del costo de coordinación. Este tipo de operación aparece con frecuencia en análisis de datos y aprendizaje automático.
 
 Estas preguntas permiten leer los resultados con más cuidado y evitar la idea simplista de que cualquier paralelización explícita será superior a una formulación vectorizada.
 
@@ -143,21 +219,11 @@ Con este marco, el siguiente paso será estudiar el paralelismo con GPU, donde e
 
 ## Ejercicios del capítulo
 
-### Comprensión
-
-1. Defina vectorización con sus palabras.
-2. Explique qué problema resuelve el broadcasting.
-3. Indique por qué SIMD resulta relevante para estas técnicas.
-4. Explique por qué vectorización y broadcasting no son exactamente lo mismo.
-5. Justifique por qué una operación vectorizada puede superar a un loop explícito en Python.
-
-### Aplicación
-
-1. Proponga un ejemplo sencillo en el que una operación sobre arreglos pueda expresarse con vectorización en lugar de un bucle explícito.
-2. Describa una situación en la que el broadcasting facilite una operación entre estructuras de distinto tamaño.
-3. Compare conceptualmente una versión con loop explícito y una versión vectorizada de una misma transformación sobre un arreglo.
-
-### Integración
-
-1. Elija una tarea numérica simple y justifique si conviene resolverla con un loop explícito, con vectorización o con paralelismo explícito.
-2. Redacte una explicación breve sobre la relación entre vectorización, acceso a memoria y rendimiento observado.
+- Defina vectorización con sus palabras.
+- Explique qué problema resuelve el broadcasting.
+- Indique por qué SIMD resulta relevante para estas técnicas.
+- Explique por qué vectorización y broadcasting no son exactamente lo mismo.
+- Justifique por qué una operación vectorizada puede superar a un loop paralelo en Python.
+- Describa una situación en la que el broadcasting facilite una operación entre estructuras de distinto tamaño.
+- Compare conceptualmente una versión con loop explícito y una versión vectorizada de una misma transformación sobre un arreglo.
+- Redacte una explicación breve sobre la relación entre vectorización y acceso a memoria.
